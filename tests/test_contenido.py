@@ -151,3 +151,20 @@ def test_no_hay_guiones_en_linea(cuerpo):
     """La politica de contenido los bloquea: uno aqui deja de funcionar mudo."""
     assert "<script>" not in cuerpo
     assert not re.search(r"\bon(click|load|submit|change)=", cuerpo)
+
+
+@pytest.mark.parametrize("ruta", ["/", "/gracias/", "/privacidad/"])
+def test_ningun_comentario_de_plantilla_llega_al_navegador(client, ruta):
+    """`{# #}` en Django es de una sola linea, y no avisa cuando no lo es.
+
+    Un comentario de varias lineas escrito asi no se elimina: se sirve como
+    texto y aparece en la pagina, arriba del todo, a la vista de cualquiera.
+    Django no da ni un aviso. Esta prueba es la unica forma de enterarse.
+    """
+    cuerpo = client.get(ruta).content.decode()
+
+    fugas = re.findall(r"\{#.{0,60}", cuerpo, re.S)
+    assert not fugas, (
+        f"Hay comentarios de plantilla visibles en {ruta}: {fugas[:2]}. "
+        "Un comentario de varias lineas va en {% comment %}, no en {# #}."
+    )

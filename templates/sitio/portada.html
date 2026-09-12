@@ -1,4 +1,14 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block cabeza %}
+  {% comment %}
+    Datos estructurados: lo que el buscador entiende del producto y sus precios.
+    Lleva la marca de un solo uso de la politica de contenido, que permite este
+    bloque y ningun otro. No ejecuta nada: es un bloque de datos.
+  {% endcomment %}
+  <script type="application/ld+json" nonce="{{ request.csp_nonce }}">{{ estructurados|safe }}</script>
+{% endblock %}
 
 {% block contenido %}
 
@@ -76,8 +86,8 @@
     {% endfor %}
   </div>
 
-  {# Decir el limite aqui ahorra llamadas, y evita la peor conversacion posible:
-     la que descubre a mitad de camino que el sistema no servia para su caso. #}
+  {% comment %} Decir el limite aqui ahorra llamadas, y evita la peor conversacion posible:
+     la que descubre a mitad de camino que el sistema no servia para su caso. {% endcomment %}
   <div class="mt-10 max-w-2xl">
     <h3 class="font-semibold">Lo que no hace</h3>
     <p class="mt-1 text-sm text-tenue">
@@ -99,16 +109,22 @@
            sobretitulo="Sin promesas"
            titulo="Asi se ve"
            entrada="Pantallas del sistema de verdad, con datos de ejemplo.">
-  {# El espacio de cada captura se reserva con su proporcion exacta desde ahora:
+  {% comment %} El espacio de cada captura se reserva con su proporcion exacta desde ahora:
      si las imagenes entraran despues sin sitio marcado, el diseño saltaria y
-     habria que rehacer la seccion. #}
+     habria que rehacer la seccion. {% endcomment %}
   <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
     {% for captura in capturas %}
       <figure>
-        <div class="{{ captura.alto }} rounded-ficha border border-borde bg-lienzo
-                    grid place-items-center text-tenue text-sm">
-          Captura pendiente
-        </div>
+        {% comment %}
+          `loading="lazy"` en las dos ultimas: la primera se ve al llegar a la
+          seccion, las otras no, y descargarlas antes de tiempo gastaria datos
+          de alguien que quiza ni baje hasta aqui.
+        {% endcomment %}
+        <img src="{% static captura.ruta %}" alt="{{ captura.pie }}"
+             class="{{ captura.alto }} w-full object-cover object-top rounded-ficha
+                    border border-borde bg-lienzo"
+             loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+             decoding="async">
         <figcaption class="mt-2 text-sm text-tenue">{{ captura.pie }}</figcaption>
       </figure>
     {% endfor %}
@@ -174,8 +190,8 @@
            sobretitulo="Antes de que pregunte"
            titulo="Lo que todo el mundo quiere saber">
   <div class="max-w-3xl flex flex-col gap-2">
-    {# Se pliegan con el propio navegador: sin guiones, se pueden buscar con
-       Ctrl+F aunque esten cerradas, y no cuestan un byte. #}
+    {% comment %} Se pliegan con el propio navegador: sin guiones, se pueden buscar con
+       Ctrl+F aunque esten cerradas, y no cuestan un byte. {% endcomment %}
     {% for p in preguntas %}
       <details class="group border border-borde rounded-ficha bg-lienzo open:bg-superficie">
         <summary class="flex items-center justify-between gap-3 px-4 py-3 min-h-toque
@@ -215,8 +231,8 @@
           <c-campo :campo="campo" />
         {% endfor %}
 
-        {# La trampa: un robot llena todo lo que encuentra, una persona no la ve
-           ni la alcanza con el tabulador. #}
+        {% comment %} La trampa: un robot llena todo lo que encuentra, una persona no la ve
+           ni la alcanza con el tabulador. {% endcomment %}
         <div class="sr-only" aria-hidden="true">
           <label for="{{ formulario.sitio_web.id_for_label }}">
             {{ formulario.sitio_web.label }}

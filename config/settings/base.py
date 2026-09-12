@@ -7,6 +7,7 @@ el sitio, y dos mundos distintos terminan con uno de los dos abandonado.
 from pathlib import Path
 
 import environ
+from csp.constants import NONCE, SELF, UNSAFE_EVAL, UNSAFE_INLINE
 
 RAIZ = Path(__file__).resolve().parents[2]
 
@@ -107,17 +108,23 @@ MARCA = {
 # ---------------------------------------------------- politica de contenido
 # Nada viene de fuera (principio IV y X): ni tipografias, ni bibliotecas, ni
 # rastreadores. Eso permite una politica casi entera "solo de aqui".
+# La marca de un solo uso permite exactamente el bloque de datos estructurados
+# de la portada. Relajar la politica con 'unsafe-inline' habria abierto justo la
+# puerta que la politica cierra, y por un bloque que no ejecuta nada.
 CONTENT_SECURITY_POLICY = {
     "DIRECTIVES": {
-        "default-src": ["'self'"],
-        "script-src": ["'self'", "'unsafe-eval'"],  # Alpine evalua sus atributos
-        "style-src": ["'self'", "'unsafe-inline'"],
-        "img-src": ["'self'", "data:"],
-        "font-src": ["'self'"],
-        "connect-src": ["'self'"],
-        "form-action": ["'self'"],
+        "default-src": [SELF],
+        # `NONCE` permite exactamente el bloque de datos estructurados de la
+        # portada, que lo lleva. `UNSAFE_EVAL` es por Alpine, que evalua las
+        # expresiones de sus atributos construyendo funciones.
+        "script-src": [SELF, UNSAFE_EVAL, NONCE],
+        "style-src": [SELF, UNSAFE_INLINE],
+        "img-src": [SELF, "data:"],
+        "font-src": [SELF],
+        "connect-src": [SELF],
+        "form-action": [SELF],
         "frame-ancestors": ["'none'"],
-        "base-uri": ["'self'"],
+        "base-uri": [SELF],
         "object-src": ["'none'"],
     },
 }

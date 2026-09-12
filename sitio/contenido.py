@@ -286,13 +286,29 @@ PREGUNTAS = (
 class Captura:
     archivo: str
     pie: str
-    alto: str  # proporcion, para que el diseño no salte cuando entre la imagen
+    alto: str  # proporcion reservada, para que el diseño no salte al cargar
+
+    @property
+    def ruta(self):
+        return f"img/{self.archivo}"
 
 
 CAPTURAS = (
-    Captura("cobro.png", "El cobro, en el telefono del mostrador", "aspect-[9/16]"),
-    Captura("panel.png", "El panel del dia: cuanto vendio y cuanto le quedo", "aspect-[4/3]"),
-    Captura("inventario.png", "Lo que hay en el estante, y lo que hay que reponer", "aspect-[4/3]"),
+    Captura(
+        "cobro.webp",
+        "El cobro, en el telefono del mostrador",
+        "aspect-[420/860]",
+    ),
+    Captura(
+        "panel.webp",
+        "El panel del dia: cuanto vendio y cuanto le quedo",
+        "aspect-[1100/800]",
+    ),
+    Captura(
+        "inventario.webp",
+        "Lo que hay en el estante, y lo que hay que reponer",
+        "aspect-[1100/800]",
+    ),
 )
 
 

@@ -12,6 +12,7 @@ dependencies = [
     "django-cotton>=1.5",
     "django-htmx>=1.21",
     "django-csp>=4.0",
+    "pillow>=12.3.0",
 ]
 
 [dependency-groups]

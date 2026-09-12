@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block titulo %}Esa pagina no existe · {{ marca.nombre }}{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+
+{% block contenido %}
+<div class="mx-auto max-w-lg px-4 py-16 sm:py-24 text-center">
+  <h1 class="text-2xl font-semibold tracking-tight">Esa pagina no existe</h1>
+  <p class="mt-3 text-tenue">
+    Puede que el enlace este viejo o mal copiado. No se preocupe, no rompio nada.
+  </p>
+  <div class="mt-6 flex flex-wrap justify-center gap-3">
+    <c-boton href="{% url 'sitio:portada' %}">Volver al inicio</c-boton>
+    <c-boton href="{{ marca.whatsapp_url }}" variante="apagado" rel="noopener">
+      Escribirnos
+    </c-boton>
+  </div>
+</div>
+{% endblock %}

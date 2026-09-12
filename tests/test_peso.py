@@ -23,14 +23,35 @@ PRESUPUESTO_KB = 150
 RAIZ_ESTATICA = Path(settings.RAIZ) / "static"
 
 
+# Las imagenes ya vienen comprimidas: volver a comprimirlas no las achica y
+# mediria algo que el servidor no hace.
+YA_COMPRIMIDOS = {".webp", ".png", ".jpg", ".jpeg", ".avif"}
+
+
 def comprimido(ruta):
-    return len(gzip.compress(ruta.read_bytes(), 9))
+    crudo = ruta.read_bytes()
+    if ruta.suffix.lower() in YA_COMPRIMIDOS:
+        return len(crudo)
+    return len(gzip.compress(crudo, 9))
 
 
 def recursos_de_la_portada(cuerpo):
-    """Lo que el navegador descarga al abrir: hoja de estilos y guiones."""
+    """Lo que el navegador descarga **al abrir** la pagina.
+
+    Las imagenes marcadas para cargar mas tarde no cuentan: solo se descargan si
+    la persona baja hasta ellas, y quien no baja no paga esos datos. Contarlas
+    aqui seria medir algo que no le pasa a casi nadie.
+    """
     rutas = re.findall(r'<link[^>]+href="/static/([^"]+)"', cuerpo)
     rutas += re.findall(r'<script[^>]+src="/static/([^"]+)"', cuerpo)
+
+    for etiqueta in re.findall(r"<img[^>]+>", cuerpo):
+        if 'loading="lazy"' in etiqueta:
+            continue
+        encontrada = re.search(r'src="/static/([^"]+)"', etiqueta)
+        if encontrada:
+            rutas.append(encontrada.group(1))
+
     return [RAIZ_ESTATICA / ruta for ruta in rutas]
 
 
