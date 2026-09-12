@@ -42,8 +42,13 @@ NAVEGADORES = [
 
 # Que se fotografia, con que tamaño y a que archivo. El cobro va en proporcion
 # de telefono porque es donde se cobra, de pie en el mostrador.
+# El ancho del telefono es 500 y no 420 por una razon del navegador: en modo
+# sin ventana, Chrome y Edge no bajan de 500 px de ancho de ventana. Pedir 420
+# daba una ventana de 500 y recortaba la foto a 420, asi que la columna de la
+# derecha -la del total- salia cortada en la captura que enseña justamente como
+# se cobra. Se pide lo que el navegador da, y no se recorta nada.
 PANTALLAS = [
-    {"ruta": "/vender/", "archivo": "cobro.png", "ancho": 420, "alto": 860},
+    {"ruta": "/vender/", "archivo": "cobro.png", "ancho": 500, "alto": 860},
     {"ruta": "/panel/", "archivo": "panel.png", "ancho": 1100, "alto": 800},
     {"ruta": "/inventario/", "archivo": "inventario.png", "ancho": 1100, "alto": 800},
 ]
@@ -254,11 +259,6 @@ def renderizar(tienda, duena, carpeta):
             # Las rutas del servidor no existen en un archivo suelto: se
             # apuntan al disco para que el navegador encuentre los estilos.
             html = html.replace('"/static/', f'"{estaticos}/')
-            # Core Pos sirve dos comentarios de plantilla como texto visible
-            # -son `{# #}` de varias lineas, que Django no elimina-. Se quitan
-            # de la captura para no fotografiar un defecto suyo. Esta linea
-            # sobra el dia que el producto lo corrija.
-            html = re.sub(r"\{#(?:[^#]|#(?!\}))*#\}", "", html)
             destino = carpeta / f"{pantalla['archivo']}.html"
             destino.write_text(html, encoding="utf-8")
             archivos.append((destino, pantalla))

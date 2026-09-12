@@ -59,6 +59,7 @@ constitucion, especificacion, plan, tareas, implementacion.
 | F1 | La pagina: todas las secciones con su contenido real | `v0.2.0-f1` |
 | F2 | Captacion: formulario, panel de contactos y WhatsApp | `v0.3.0-f2` |
 | F3 | Cierre: capturas reales, compartir, buscadores y errores | `v1.0.0` |
+| F4 | Identidad visual: el logo, la paleta de la marca y los campos | `v1.1.0` |
 
 ### Lo que garantiza la suite
 
@@ -85,6 +86,32 @@ constitucion, especificacion, plan, tareas, implementacion.
   una sola linea y no avisa cuando no lo es.
 - **El peso aguanta con las imagenes dentro**: 33 KB la primera carga, 75 KB si
   se baja la pagina entera.
+- **El contraste se calcula, no se estima**: cada par de texto y fondo que el
+  sitio pinta llega al minimo de la norma, y la prueba falla nombrando el par y
+  su cifra.
+- **La paleta es la misma que la del producto**, leida de su propia hoja de
+  estilos y no de una copia.
+- **El logo es el mismo archivo**, byte a byte: hay una sola copia del original,
+  y vive en Core Pos.
+
+## La marca
+
+El logo y los colores salen de un solo archivo: `assets/marca/logo.png` en Core
+Pos. Ni el sitio ni el producto tienen una segunda copia, porque el dia que
+alguien reemplace una se quedaria la otra y los dos se verian de dos empresas
+parecidas.
+
+Para rehacer los archivos del logo, con el producto al lado:
+
+```bash
+uv run python herramientas/marca.py
+./tailwindcss.exe -i assets/tailwind.css -o static/css/sitio.css --minify
+```
+
+El azul marino `#274166` lleva la accion. El verde `#58AB9B` se queda en el
+logo: da 2,72:1 sobre blanco, y en el producto el verde ya significa que la caja
+cuadro. Por eso `--color-marca-verde` y `--color-sana` son dos nombres
+distintos, y hay prueba de que no se confunden.
 
 ## Las capturas
 

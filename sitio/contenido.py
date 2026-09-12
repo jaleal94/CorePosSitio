@@ -297,7 +297,7 @@ CAPTURAS = (
     Captura(
         "cobro.webp",
         "El cobro, en el telefono del mostrador",
-        "aspect-[420/860]",
+        "aspect-[500/860]",
     ),
     Captura(
         "panel.webp",

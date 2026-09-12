@@ -4,18 +4,41 @@
 @source "../sitio/**/*.py";
 
 /* Paleta y medidas del sitio. Se declaran aqui para que el contenido no las
-   repita: cambiar el color de marca es cambiar una linea. */
+   repita: cambiar el color de marca es cambiar una linea.
+
+   Los valores son los mismos que los de Core Pos, y hay una prueba que lo
+   comprueba leyendo la hoja del producto. Que el sitio y el sistema se vean
+   iguales no es cuestion de gusto: quien llega aqui y despues entra alla tiene
+   que reconocer que es lo mismo.
+
+   Estan en hexadecimal porque los tres de la marca salen leidos del archivo
+   del logo, pixel a pixel, y asi no pasan por ninguna conversion.
+
+   Compilar con:  ./tailwindcss.exe -i assets/tailwind.css -o static/css/sitio.css --minify */
 @theme {
-  --color-lienzo: oklch(0.99 0.005 250);
-  --color-superficie: oklch(1 0 0);
-  --color-texto: oklch(0.25 0.02 250);
-  --color-tenue: oklch(0.52 0.02 250);
-  --color-borde: oklch(0.91 0.01 250);
-  --color-acento: oklch(0.55 0.16 250);
-  --color-acento-fuerte: oklch(0.45 0.17 250);
-  --color-acento-suave: oklch(0.96 0.03 250);
-  --color-sana: oklch(0.55 0.14 155);
-  --color-atencion: oklch(0.62 0.15 75);
+  /* La marca. Solo pintan donde aparece la marca misma. */
+  --color-marca: #274166;        /* la C */
+  --color-marca-verde: #58AB9B;  /* la flecha */
+  --color-marca-texto: #475D86;  /* las letras */
+
+  --color-lienzo: #F7F9FC;
+  --color-superficie: #FFFFFF;
+  --color-texto: #1F2633;
+  --color-tenue: #5A6275;
+  --color-borde: #E2E7EF;        /* separa; no delimita nada que se toque */
+  --color-borde-fuerte: #8390A4; /* el borde de los campos: se tiene que ver */
+
+  /* El acento es el azul de la marca y no el verde. El verde del logo da
+     2,72:1 sobre blanco, que no llega ni a texto grande; y en el producto el
+     verde ya significa que la caja cuadro y que hay existencia. Aqui se
+     respeta lo mismo, porque es el mismo sistema. */
+  --color-acento: #274166;
+  --color-acento-fuerte: #1B2E4A;
+  --color-acento-suave: #EDF1F7;
+
+  /* Dos verdes con dos nombres: `marca-verde` identifica, `sana` informa. */
+  --color-sana: #1F7A4D;
+  --color-atencion: #9A6400;
 
   --radius-ficha: 0.75rem;
   /* Area tactil minima: se toca con el dedo, en el mostrador. */
@@ -32,5 +55,37 @@
   :focus-visible {
     outline: 2px solid var(--color-acento);
     outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Los campos del formulario se visten aqui, como en el producto, y no clase
+     por clase en cada plantilla: lo que renderiza Django queda bien sin tocar
+     cada widget.
+
+     Hasta esta fase no estaban vestidos, y Tailwind le quita el borde y el
+     fondo a todo control por omision. El resultado era que el formulario de
+     contacto -lo unico que este sitio tiene que conseguir- se veia como una
+     lista de textos grises sueltos, sin una sola caja donde escribir. */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+  select,
+  textarea {
+    width: 100%;
+    min-height: var(--spacing-toque);
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem; /* 16 px: por debajo, el navegador del telefono hace zoom */
+    color: var(--color-texto);
+    background-color: var(--color-superficie);
+    border: 1px solid var(--color-borde-fuerte);
+    border-radius: var(--radius-ficha);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-tenue);
+  }
+
+  input[aria-invalid="true"],
+  textarea[aria-invalid="true"] {
+    border-color: var(--color-atencion);
   }
 }
