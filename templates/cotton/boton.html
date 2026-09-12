@@ -1,0 +1,25 @@
+{% comment %}
+  Boton, o enlace con forma de boton.
+
+  Uso:  <c-boton href="#contacto">Quiero probarlo</c-boton>
+        <c-boton variante="apagado" tipo="submit">Enviar</c-boton>
+
+  Alto minimo de 44 px: se toca con el dedo, en un telefono, de pie.
+{% endcomment %}
+{% if href %}
+  <a href="{{ href }}"
+     class="inline-flex items-center justify-center gap-2 min-h-toque px-4 rounded-ficha text-sm
+            font-medium transition-colors select-none
+            {% if variante == 'apagado' %}bg-superficie text-texto border border-borde hover:bg-lienzo
+            {% elif variante == 'plano' %}text-acento-fuerte hover:bg-acento-suave
+            {% else %}bg-acento text-white hover:bg-acento-fuerte{% endif %} {{ class }}"
+     {{ attrs }}>{{ slot }}</a>
+{% else %}
+  <button type="{{ tipo|default:'button' }}"
+     class="inline-flex items-center justify-center gap-2 min-h-toque px-4 rounded-ficha text-sm
+            font-medium transition-colors select-none
+            {% if variante == 'apagado' %}bg-superficie text-texto border border-borde hover:bg-lienzo
+            {% elif variante == 'plano' %}text-acento-fuerte hover:bg-acento-suave
+            {% else %}bg-acento text-white hover:bg-acento-fuerte{% endif %} {{ class }}"
+     {{ attrs }}>{{ slot }}</button>
+{% endif %}

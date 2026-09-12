@@ -1,0 +1,115 @@
+{% load static %}<!doctype html>
+<html lang="es-VE">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <title>{% block titulo %}{{ marca.nombre }} · {{ marca.descripcion }}{% endblock %}</title>
+  <meta name="description" content="{% block descripcion %}{{ marca.descripcion }}. Cobre rapido, controle su mercancia y cuadre la caja todos los dias.{% endblock %}">
+
+  {# Todo se sirve desde aqui: ni tipografias ni bibliotecas de otro servidor
+     (principio IV). La del sistema carga en cero y se ve bien en todos lados. #}
+  <link rel="stylesheet" href="{% static 'css/sitio.css' %}">
+  <script src="{% static 'js/sitio.js' %}" defer></script>
+  {% block cabeza %}{% endblock %}
+</head>
+
+<body class="min-h-dvh flex flex-col">
+
+<a href="#contenido" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2
+   focus:z-50 focus:bg-superficie focus:px-4 focus:py-2 focus:rounded-ficha focus:border
+   focus:border-borde">Saltar al contenido</a>
+
+<header class="sticky top-0 z-40 bg-superficie/95 backdrop-blur border-b border-borde">
+  <div class="mx-auto max-w-6xl px-4 h-14 flex items-center gap-3">
+    <a href="{% url 'sitio:portada' %}" class="font-semibold text-base shrink-0">
+      {{ marca.nombre }}
+    </a>
+
+    <nav class="hidden md:flex items-center gap-1 ml-4 text-sm" aria-label="Secciones">
+      {% for ancla, etiqueta in secciones_del_menu %}
+        <a href="#{{ ancla }}"
+           class="px-3 py-2 rounded-ficha text-tenue hover:text-texto hover:bg-acento-suave">
+          {{ etiqueta }}
+        </a>
+      {% endfor %}
+    </nav>
+
+    <div class="ml-auto flex items-center gap-2">
+      <a href="{{ marca.app_url }}" class="hidden sm:inline-flex items-center min-h-toque px-3
+         text-sm text-tenue hover:text-texto">Entrar</a>
+      <c-boton href="#contacto">Quiero probarlo</c-boton>
+
+      <button type="button" data-abre-menu aria-expanded="false" aria-controls="menu-telefono"
+              class="md:hidden size-toque -mr-2 grid place-items-center rounded-ficha
+                     hover:bg-acento-suave">
+        <span class="sr-only">Ver las secciones</span>
+        <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  {# El menu del telefono. Sin el, en 360 px no habria forma de saltar a los
+     precios sin bajar por toda la pagina. #}
+  <nav id="menu-telefono" hidden class="md:hidden border-t border-borde bg-superficie"
+       aria-label="Secciones">
+    <div class="mx-auto max-w-6xl px-2 py-2 flex flex-col">
+      {% for ancla, etiqueta in secciones_del_menu %}
+        <a href="#{{ ancla }}"
+           class="flex items-center min-h-toque px-3 rounded-ficha text-sm hover:bg-acento-suave">
+          {{ etiqueta }}
+        </a>
+      {% endfor %}
+      <a href="{{ marca.app_url }}"
+         class="flex items-center min-h-toque px-3 rounded-ficha text-sm text-tenue
+                hover:bg-acento-suave border-t border-borde mt-1 pt-1">Entrar a mi tienda</a>
+    </div>
+  </nav>
+</header>
+
+<main id="contenido" class="flex-1">
+  {% block contenido %}{% endblock %}
+</main>
+
+<footer class="border-t border-borde bg-superficie">
+  <div class="mx-auto max-w-6xl px-4 py-10 flex flex-col gap-8 sm:flex-row sm:justify-between">
+    <div class="max-w-xs">
+      <p class="font-semibold">{{ marca.nombre }}</p>
+      <p class="text-sm text-tenue mt-1">{{ marca.descripcion }}.</p>
+      <p class="text-sm text-tenue mt-3">
+        Hecho en Venezuela, para comercios de aqui.
+      </p>
+    </div>
+
+    <div class="flex flex-col gap-2 text-sm">
+      <p class="font-medium">Escribanos</p>
+      <a href="{{ marca.whatsapp_url }}" rel="noopener" class="text-acento-fuerte underline">
+        WhatsApp
+      </a>
+      <a href="mailto:{{ marca.correo }}" class="text-acento-fuerte underline">
+        {{ marca.correo }}
+      </a>
+    </div>
+
+    <div class="flex flex-col gap-2 text-sm">
+      <p class="font-medium">El sistema</p>
+      <a href="{{ marca.app_url }}" class="text-tenue hover:text-texto">Entrar a mi tienda</a>
+      <a href="#precios" class="text-tenue hover:text-texto">Precios</a>
+      <a href="#preguntas" class="text-tenue hover:text-texto">Preguntas</a>
+    </div>
+  </div>
+
+  <div class="border-t border-borde">
+    <div class="mx-auto max-w-6xl px-4 py-4 text-xs text-tenue flex flex-wrap gap-x-4 gap-y-1
+                justify-between">
+      <p>&copy; {% now "Y" %} {{ marca.nombre }}</p>
+      <p>Este sitio no usa rastreadores de terceros.</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

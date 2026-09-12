@@ -1,0 +1,25 @@
+{% comment %}
+  Una seccion de la pagina, con su ancla, su titulo y su entrada.
+
+  Uso:  <c-seccion ancla="precios" titulo="Cuanto cuesta"
+                   entrada="Sin letra chica">...</c-seccion>
+
+  El desplazamiento superior existe porque la cabecera es fija: sin el, al
+  saltar a un ancla el titulo queda tapado.
+{% endcomment %}
+<section id="{{ ancla }}" class="scroll-mt-20 {{ class }}">
+  <div class="mx-auto max-w-6xl px-4 py-14 sm:py-20">
+    {% if titulo %}
+      <div class="max-w-2xl">
+        {% if sobretitulo %}
+          <p class="text-sm font-medium text-acento-fuerte">{{ sobretitulo }}</p>
+        {% endif %}
+        <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight mt-1">{{ titulo }}</h2>
+        {% if entrada %}
+          <p class="mt-3 text-tenue">{{ entrada }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+    <div class="{% if titulo %}mt-8 sm:mt-10{% endif %}">{{ slot }}</div>
+  </div>
+</section>

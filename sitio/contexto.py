@@ -9,6 +9,8 @@ from urllib.parse import quote
 
 from django.conf import settings
 
+from .contenido import SECCIONES_DEL_MENU
+
 
 def marca(request):
     datos = dict(settings.MARCA)
@@ -16,4 +18,4 @@ def marca(request):
     # en cada boton del sitio.
     saludo = f"Hola, vi {datos['nombre']} y quiero saber mas para mi negocio."
     datos["whatsapp_url"] = f"https://wa.me/{datos['whatsapp']}?text={quote(saludo)}"
-    return {"marca": datos}
+    return {"marca": datos, "secciones_del_menu": SECCIONES_DEL_MENU}

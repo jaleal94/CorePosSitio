@@ -56,7 +56,7 @@ constitucion, especificacion, plan, tareas, implementacion.
 | Fase | Contenido | Etiqueta |
 |---|---|---|
 | F0 | Fundacion: stack, calidad, integracion continua, Spec Kit | `v0.1.0-f0` |
-| F1 | La pagina: todas las secciones con su contenido real | pendiente |
+| F1 | La pagina: todas las secciones con su contenido real | `v0.2.0-f1` |
 | F2 | Captacion: formulario, panel de contactos y WhatsApp | pendiente |
 | F3 | Cierre: privacidad, buscadores, capturas, endurecimiento | pendiente |
 
@@ -67,6 +67,12 @@ constitucion, especificacion, plan, tareas, implementacion.
 - **La marca vive en un solo sitio**: cambiarla es cambiar una linea.
 - **La hoja de estilos esta compilada**: si falta, la suite lo dice antes de que
   se note en produccion.
+- **Se habla en lenguaje de comercio**: una prueba recorre la pagina y falla si
+  aparece una palabra de programador. La lista esta en `tests/test_contenido.py`.
+- **Los precios cuadran con el producto**: se comparan contra la declaracion de
+  Core Pos, y ningun numero puede estar escrito a mano en la plantilla.
+- **La primera carga cabe en 150 KB** comprimidos. Hoy pesa 12 KB.
+- **Se dice lo que el producto no hace**, y hay una prueba que lo exige.
 
 ## Comprobaciones
 
