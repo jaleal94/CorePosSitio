@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block titulo %}Contactos · {{ marca.nombre }}{% endblock %}
+
+{% block contenido %}
+<div class="mx-auto max-w-6xl px-4 py-10">
+  <div class="flex items-start justify-between gap-3 flex-wrap">
+    <div>
+      <h1 class="text-xl font-semibold">Contactos</h1>
+      <p class="text-sm text-tenue">
+        {% if pendientes %}
+          <span class="text-atencion font-medium">
+            {{ pendientes }} sin atender
+          </span> de {{ total }}
+        {% else %}
+          Todos atendidos. {{ total }} en total.
+        {% endif %}
+      </p>
+    </div>
+    <c-boton href="{% url 'sitio:exportar' %}" variante="apagado">Descargar en Excel</c-boton>
+  </div>
+
+  {% if messages %}
+    {% for mensaje in messages %}
+      <p class="mt-4 text-sm text-sana">{{ mensaje }}</p>
+    {% endfor %}
+  {% endif %}
+
+  <div class="mt-6 flex flex-wrap gap-2 text-sm">
+    <a href="{% url 'sitio:panel' %}"
+       class="px-3 py-1.5 rounded-ficha border {% if not estado %}border-acento text-acento-fuerte{% else %}border-borde text-tenue{% endif %}">
+      Todos
+    </a>
+    {% for valor, etiqueta in estados %}
+      <a href="?estado={{ valor }}"
+         class="px-3 py-1.5 rounded-ficha border {% if estado == valor %}border-acento text-acento-fuerte{% else %}border-borde text-tenue{% endif %}">
+        {{ etiqueta }}
+      </a>
+    {% endfor %}
+  </div>
+
+  <div class="mt-6 flex flex-col gap-3">
+    {% for fila in filas %}
+      <c-tarjeta class="{% if fila.contacto.esta_sin_atender %}border-acento{% endif %}">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div class="min-w-0">
+            <p class="font-medium">
+              {{ fila.contacto.nombre }}
+              <span class="text-tenue font-normal">· {{ fila.contacto.comercio }}</span>
+            </p>
+            <p class="text-sm text-tenue">
+              {{ fila.contacto.telefono_legible }}
+              {% if fila.contacto.correo %} · {{ fila.contacto.correo }}{% endif %}
+            </p>
+            <p class="text-xs text-tenue mt-0.5">
+              {{ fila.contacto.creado_en|date:"d/m/Y H:i" }}
+              {% if fila.contacto.origen %} · desde {{ fila.contacto.origen }}{% endif %}
+              {% if fila.contacto.atendido_por %}
+                · lo atendio {{ fila.contacto.atendido_por.get_username }}
+              {% endif %}
+            </p>
+            {% if fila.contacto.mensaje %}
+              <p class="mt-2 text-sm">&ldquo;{{ fila.contacto.mensaje|linebreaksbr }}&rdquo;</p>
+            {% endif %}
+          </div>
+
+          <div class="shrink-0">
+            <c-boton href="{{ fila.whatsapp }}" rel="noopener">Responder</c-boton>
+          </div>
+        </div>
+
+        <form method="post" action="{% url 'sitio:actualizar_contacto' fila.contacto.pk %}"
+              class="mt-4 pt-4 border-t border-borde flex flex-wrap items-end gap-3">
+          {% csrf_token %}
+          <div>
+            <label class="text-xs text-tenue" for="estado-{{ fila.contacto.pk }}">Estado</label>
+            <select id="estado-{{ fila.contacto.pk }}" name="estado" class="mt-1 text-sm">
+              {% for valor, etiqueta in estados %}
+                <option value="{{ valor }}"
+                        {% if fila.contacto.estado == valor %}selected{% endif %}>
+                  {{ etiqueta }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="flex-1 min-w-48">
+            <label class="text-xs text-tenue" for="notas-{{ fila.contacto.pk }}">Notas</label>
+            <input id="notas-{{ fila.contacto.pk }}" name="notas" class="mt-1 text-sm w-full"
+                   value="{{ fila.contacto.notas }}" placeholder="Lo que hablaron">
+          </div>
+          <c-boton tipo="submit" variante="apagado">Guardar</c-boton>
+        </form>
+      </c-tarjeta>
+    {% empty %}
+      <div class="text-center py-16">
+        <p class="font-medium">
+          {% if estado %}Nadie en ese estado{% else %}Todavia no ha escrito nadie{% endif %}
+        </p>
+        <p class="mt-1 text-sm text-tenue">
+          Cuando alguien llene el formulario de la pagina, aparece aqui.
+        </p>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

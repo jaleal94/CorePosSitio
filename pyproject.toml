@@ -29,7 +29,13 @@ line-length = 100
 target-version = "py313"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B", "SIM", "DJ", "RUF"]
+select = ["E", "F", "W", "I", "UP", "B", "DJ", "C4", "SIM", "RUF"]
+ignore = [
+    "RUF012",  # los atributos mutables de clase son idiomaticos en Django
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["sitio", "config"]
 
 [tool.ruff.lint.per-file-ignores]
 "*/migrations/*" = ["E501", "RUF012"]

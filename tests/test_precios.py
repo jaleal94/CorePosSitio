@@ -59,7 +59,7 @@ def planes_del_producto():
 def test_los_planes_del_sitio_son_los_que_cobra_el_producto():
     del_producto = planes_del_producto()
 
-    assert set(p.clave for p in PLANES) == set(del_producto), (
+    assert {p.clave for p in PLANES} == set(del_producto), (
         "el sitio y el producto no ofrecen los mismos planes"
     )
 

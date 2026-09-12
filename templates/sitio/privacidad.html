@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block titulo %}Sus datos · {{ marca.nombre }}{% endblock %}
+
+{% block contenido %}
+<div class="mx-auto max-w-2xl px-4 py-14 sm:py-20">
+  <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">Como cuidamos sus datos</h1>
+  <p class="mt-3 text-tenue">
+    En pocas palabras y sin letra chica.
+  </p>
+
+  <div class="mt-10 flex flex-col gap-8">
+    <section>
+      <h2 class="font-semibold">Que guardamos</h2>
+      <p class="mt-2 text-sm text-tenue">
+        Lo que usted escribe en el formulario: su nombre, el nombre de su negocio,
+        su telefono, su correo si lo puso, y lo que nos haya querido contar.
+        Guardamos tambien desde que direccion de internet llego, para poder
+        defendernos de envios automaticos.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="font-semibold">Para que</h2>
+      <p class="mt-2 text-sm text-tenue">
+        Para escribirle sobre {{ marca.nombre }}. Para nada mas. No le vamos a
+        mandar publicidad de otras cosas ni a meterlo en ninguna lista.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="font-semibold">Con quien los compartimos</h2>
+      <p class="mt-2 text-sm text-tenue">
+        Con nadie. Sus datos no salen de nuestro servidor. Este sitio no tiene
+        rastreadores de terceros, ni de redes sociales, ni de nadie mas: nada de
+        lo que hace aqui se le cuenta a otra empresa.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="font-semibold">Hasta cuando</h2>
+      <p class="mt-2 text-sm text-tenue">
+        Hasta que usted nos pida que los borremos, o hasta que quede claro que no
+        le interesa el sistema.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="font-semibold">Como los borra</h2>
+      <p class="mt-2 text-sm text-tenue">
+        Escribanos y los borramos. No hay que llenar nada ni dar explicaciones.
+      </p>
+      <div class="mt-3">
+        <c-boton href="{{ marca.whatsapp_url }}" variante="apagado" rel="noopener">
+          Escribir por WhatsApp
+        </c-boton>
+      </div>
+    </section>
+
+    <section class="border-t border-borde pt-8">
+      <h2 class="font-semibold">Y los datos de su negocio, si abre una tienda</h2>
+      <p class="mt-2 text-sm text-tenue">
+        Eso es otra cosa y se rige por las condiciones del sistema. Lo que si
+        vale la pena saber desde ahora: sus productos, sus ventas y sus clientes
+        son suyos, se los puede llevar en un archivo cuando quiera, y ni siquiera
+        quien administra la plataforma los ve.
+      </p>
+    </section>
+  </div>
+</div>
+{% endblock %}
