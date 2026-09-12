@@ -42,6 +42,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
+    # Traduce el limite de tasa a un 429 antes de que parezca falta de permisos.
+    "sitio.middleware.LimiteDeTasaMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"

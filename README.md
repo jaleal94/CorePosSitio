@@ -57,7 +57,7 @@ constitucion, especificacion, plan, tareas, implementacion.
 |---|---|---|
 | F0 | Fundacion: stack, calidad, integracion continua, Spec Kit | `v0.1.0-f0` |
 | F1 | La pagina: todas las secciones con su contenido real | `v0.2.0-f1` |
-| F2 | Captacion: formulario, panel de contactos y WhatsApp | pendiente |
+| F2 | Captacion: formulario, panel de contactos y WhatsApp | `v0.3.0-f2` |
 | F3 | Cierre: privacidad, buscadores, capturas, endurecimiento | pendiente |
 
 ### Lo que garantiza la suite
@@ -73,6 +73,35 @@ constitucion, especificacion, plan, tareas, implementacion.
   Core Pos, y ningun numero puede estar escrito a mano en la plantilla.
 - **La primera carga cabe en 150 KB** comprimidos. Hoy pesa 12 KB.
 - **Se dice lo que el producto no hace**, y hay una prueba que lo exige.
+- **Ningun contacto se pierde**: se guarda antes que nada, y un reenvio del mismo
+  telefono actualiza en vez de duplicar, sin pisar el trabajo del operador.
+- **Los robots no pasan**: trampa invisible y limite por origen, con una
+  respuesta que dice "espere", no "no tiene permiso".
+- **El panel no se ve sin sesion**, ni la exportacion.
+
+## El panel de contactos
+
+Los contactos que llegan por el formulario se ven en `/contactos/`, y hace falta
+una cuenta del personal:
+
+```bash
+uv run python manage.py createsuperuser
+```
+
+Cada contacto trae su enlace de WhatsApp con el mensaje ya escrito, que lo llama
+por su nombre y menciona su comercio.
+
+**No hay aviso automatico cuando llega uno** (decision D-02): empujar un mensaje
+exigiria contratar un servicio externo, y por ahi pasarian los datos de quien
+escribe, que es justo lo que el principio X prohibe. Para no depender de
+acordarse de mirar el panel:
+
+```bash
+uv run python manage.py contactos_pendientes --enlaces
+```
+
+Ese comando se puede programar para que los pendientes aparezcan donde le quede
+comodo verlos.
 
 ## Comprobaciones
 

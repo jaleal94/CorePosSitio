@@ -1,0 +1,28 @@
+{% comment %}
+  Un campo con su etiqueta, su ayuda y su error.
+
+  Uso:  <c-campo :campo="campo" />
+
+  La etiqueta va siempre asociada al control, y el error se dice debajo, en
+  lenguaje comun, sin borrar lo que la persona ya escribio.
+{% endcomment %}
+<div class="flex flex-col gap-1.5 {{ class }}">
+  <label for="{{ campo.id_for_label }}" class="text-sm font-medium">
+    {{ campo.label }}
+    {% if not campo.field.required %}
+      <span class="text-tenue font-normal">(opcional)</span>
+    {% endif %}
+  </label>
+
+  {{ campo }}
+
+  {% if campo.help_text and not campo.errors %}
+    <p class="text-xs text-tenue">{{ campo.help_text }}</p>
+  {% endif %}
+
+  {% if campo.errors %}
+    <p class="text-xs text-atencion font-medium" role="alert">
+      {{ campo.errors|join:" " }}
+    </p>
+  {% endif %}
+</div>

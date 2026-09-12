@@ -197,28 +197,69 @@
 <c-seccion ancla="contacto"
            sobretitulo="Empiece hoy"
            titulo="Dejenos sus datos y le escribimos"
-           entrada="Le mostramos como quedaria su bodega, sin compromiso.">
-  <div class="grid gap-6 lg:grid-cols-2">
+           entrada="Le mostramos como quedaria su negocio, sin compromiso y sin tarjeta.">
+  <div class="grid gap-8 lg:grid-cols-2">
     <c-tarjeta>
-      <p class="text-sm text-tenue">
-        El formulario llega en la proxima entrega. Mientras tanto, escribanos
-        directo: le respondemos el mismo dia.
-      </p>
-      <div class="mt-4 flex flex-wrap gap-3">
-        <c-boton href="{{ marca.whatsapp_url }}" rel="noopener">Escribir por WhatsApp</c-boton>
-        <c-boton href="mailto:{{ marca.correo }}" variante="apagado">Mandar un correo</c-boton>
-      </div>
+      {% if hay_errores %}
+        <p class="mb-4 text-sm text-atencion font-medium" role="alert">
+          Falta algo. Revise lo marcado abajo; lo que ya escribio no se perdio.
+        </p>
+      {% endif %}
+
+      <form method="post" action="{% url 'sitio:portada' %}#contacto"
+            class="flex flex-col gap-4">
+        {% csrf_token %}
+        <input type="hidden" name="origen" value="seccion-contacto">
+
+        {% for campo in formulario.campos_visibles %}
+          <c-campo :campo="campo" />
+        {% endfor %}
+
+        {# La trampa: un robot llena todo lo que encuentra, una persona no la ve
+           ni la alcanza con el tabulador. #}
+        <div class="sr-only" aria-hidden="true">
+          <label for="{{ formulario.sitio_web.id_for_label }}">
+            {{ formulario.sitio_web.label }}
+          </label>
+          {{ formulario.sitio_web }}
+        </div>
+
+        <c-boton tipo="submit" class="w-full">Quiero que me escriban</c-boton>
+
+        <p class="text-xs text-tenue">
+          Usamos sus datos para escribirle sobre {{ marca.nombre }} y nada mas.
+          <a href="{% url 'sitio:privacidad' %}" class="underline">Como los cuidamos</a>.
+        </p>
+      </form>
     </c-tarjeta>
 
-    <div class="text-sm text-tenue flex flex-col gap-4">
-      <p>
-        Si prefiere verlo usted mismo antes de hablar con nadie, pida su tienda de
-        una vez: es gratis y no pide tarjeta.
-      </p>
+    <div class="flex flex-col gap-6">
       <div>
-        <c-boton href="{{ marca.app_url }}/solicitar/" variante="apagado">
-          Pedir mi tienda
-        </c-boton>
+        <h3 class="font-semibold">¿Prefiere escribir de una vez?</h3>
+        <p class="mt-1 text-sm text-tenue">
+          Escribanos por WhatsApp y le respondemos {{ plazo|default:"el mismo dia" }}.
+        </p>
+        <div class="mt-3 flex flex-wrap gap-3">
+          <c-boton href="{{ marca.whatsapp_url }}" variante="apagado" rel="noopener">
+            Escribir por WhatsApp
+          </c-boton>
+          <c-boton href="mailto:{{ marca.correo }}" variante="plano">
+            {{ marca.correo }}
+          </c-boton>
+        </div>
+      </div>
+
+      <div class="border-t border-borde pt-6">
+        <h3 class="font-semibold">¿Prefiere verlo usted mismo?</h3>
+        <p class="mt-1 text-sm text-tenue">
+          Pida su tienda de una vez, sin hablar con nadie. Es gratis y no pide
+          tarjeta.
+        </p>
+        <div class="mt-3">
+          <c-boton href="{{ marca.app_url }}/solicitar/" variante="apagado">
+            Pedir mi tienda
+          </c-boton>
+        </div>
       </div>
     </div>
   </div>
