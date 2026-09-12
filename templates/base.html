@@ -27,6 +27,8 @@
   {% block robots %}{% endblock %}
 
   <link rel="stylesheet" href="{% static 'css/sitio.css' %}">
+  <link rel="icon" href="{% static 'img/favicon.png' %}" sizes="48x48">
+  <link rel="apple-touch-icon" href="{% static 'img/icono-180.png' %}">
   <script src="{% static 'js/sitio.js' %}" defer></script>
   {% block cabeza %}{% endblock %}
 </head>
@@ -39,7 +41,14 @@
 
 <header class="sticky top-0 z-40 bg-superficie/95 backdrop-blur border-b border-borde">
   <div class="mx-auto max-w-6xl px-4 h-14 flex items-center gap-3">
-    <a href="{% url 'sitio:portada' %}" class="font-semibold text-base shrink-0">
+    {% comment %}
+      La marca al lado del nombre, y el nombre escrito: un lector de pantalla
+      lee el texto, no la imagen, y por eso la imagen no lo repite.
+    {% endcomment %}
+    <a href="{% url 'sitio:portada' %}"
+       class="font-semibold text-base shrink-0 flex items-center gap-2">
+      <img src="{% static 'img/logo-marca.png' %}" alt="" width="138" height="129"
+           class="h-8 w-auto">
       {{ marca.nombre }}
     </a>
 
@@ -94,7 +103,8 @@
 <footer class="border-t border-borde bg-superficie">
   <div class="mx-auto max-w-6xl px-4 py-10 flex flex-col gap-8 sm:flex-row sm:justify-between">
     <div class="max-w-xs">
-      <p class="font-semibold">{{ marca.nombre }}</p>
+      <img src="{% static 'img/logo.png' %}" alt="{{ marca.nombre }}"
+           width="191" height="232" class="w-[88px] h-auto mb-3">
       <p class="text-sm text-tenue mt-1">{{ marca.descripcion }}.</p>
       <p class="text-sm text-tenue mt-3">
         Hecho en Venezuela, para comercios de aqui.
