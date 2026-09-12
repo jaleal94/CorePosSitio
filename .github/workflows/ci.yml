@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  calidad:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: sitio
+          POSTGRES_PASSWORD: sitio
+          POSTGRES_DB: coreposweb
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgres://sitio:sitio@localhost:5432/coreposweb
+      DJANGO_SECRET_KEY: clave-solo-para-integracion-continua
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Instalar dependencias
+        run: uv sync --frozen
+
+      - name: Analisis estatico
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+
+      - name: Auditoria de dependencias
+        run: uv run pip-audit --strict --progress-spinner off
+
+      - name: Verificacion de despliegue (settings de produccion)
+        env:
+          DJANGO_ALLOWED_HOSTS: corepos.example.com
+          DJANGO_SECRET_KEY: ci-8f2b1ad49e7c4056b8d2f14a9c6e03b75d81af24e9c05b6d3a7f18e2c4b09d5a
+        run: uv run python manage.py check --deploy --fail-level WARNING --settings=config.settings.prod
+
+      - name: Migraciones sin cambios pendientes
+        run: uv run python manage.py makemigrations --check --dry-run --settings=config.settings.test
+
+      # La hoja compilada se versiona para que clonar y arrancar funcione sin
+      # compilar nada. Para que no envejezca, aqui se recompila y se compara.
+      - name: La hoja de estilos esta al dia
+        run: |
+          curl -fsSL -o tailwindcss \
+            https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64
+          chmod +x tailwindcss
+          ./tailwindcss -i assets/tailwind.css -o static/css/sitio.css --minify
+          git diff --exit-code -- static/css/sitio.css \
+            || (echo "::error::static/css/sitio.css quedo vieja: recompila y vuelve a commitear" && exit 1)
+
+      - name: Pruebas
+        run: uv run pytest --cov --cov-report=term-missing

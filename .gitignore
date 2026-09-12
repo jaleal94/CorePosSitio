@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.py[cod]
+.env
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+/static_recolectado/
+*.sqlite3
+tailwindcss.exe

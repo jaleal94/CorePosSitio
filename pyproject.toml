@@ -1,0 +1,49 @@
+[project]
+name = "core-pos-sitio"
+version = "0.1.0"
+description = "Sitio de presentacion de Core Pos"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "django>=5.2,<5.3",
+    "psycopg[binary]>=3.2",
+    "django-environ>=0.12",
+    "whitenoise>=6.9",
+    "django-ratelimit>=4.1",
+    "django-cotton>=1.5",
+    "django-htmx>=1.21",
+    "django-csp>=4.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-django>=4.9",
+    "pytest-cov>=6.0",
+    "ruff>=0.9",
+    "pre-commit>=4.0",
+    "pip-audit>=2.7",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "DJ", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+"*/migrations/*" = ["E501", "RUF012"]
+"config/settings/*" = ["F403", "F405"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+python_files = ["test_*.py"]
+addopts = "--strict-markers --reuse-db -q"
+testpaths = ["tests", "sitio"]
+markers = [
+    "peso: presupuesto de peso de la primera carga (RNF-01)",
+]
+
+[tool.coverage.run]
+source = ["sitio", "config"]
+omit = ["*/migrations/*", "*/tests/*"]
