@@ -1,0 +1,10 @@
+{% comment %}
+  Tarjeta: agrupa contenido relacionado.
+
+  Uso:  <c-tarjeta titulo="Basico">...</c-tarjeta>
+{% endcomment %}
+<div class="bg-superficie border border-borde rounded-ficha {{ relleno|default:'p-5' }}
+            {% if destacada %}ring-2 ring-acento border-acento{% endif %} {{ class }}" {{ attrs }}>
+  {% if titulo %}<h3 class="font-semibold">{{ titulo }}</h3>{% endif %}
+  {{ slot }}
+</div>
