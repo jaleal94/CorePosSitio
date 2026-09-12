@@ -7,8 +7,25 @@
   <title>{% block titulo %}{{ marca.nombre }} · {{ marca.descripcion }}{% endblock %}</title>
   <meta name="description" content="{% block descripcion %}{{ marca.descripcion }}. Cobre rapido, controle su mercancia y cuadre la caja todos los dias.{% endblock %}">
 
-  {# Todo se sirve desde aqui: ni tipografias ni bibliotecas de otro servidor
-     (principio IV). La del sistema carga en cero y se ve bien en todos lados. #}
+  {% comment %} Todo se sirve desde aqui: ni tipografias ni bibliotecas de otro servidor
+     (principio IV). La del sistema carga en cero y se ve bien en todos lados. {% endcomment %}
+  {% comment %}
+    Como se ve cuando alguien manda el enlace por WhatsApp, que es como se va a
+    difundir esto: de un comerciante a otro. Sin estas etiquetas el enlace
+    aparece como una direccion pelada y nadie lo abre.
+  {% endcomment %}
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ marca.nombre }}">
+  <meta property="og:title" content="{% block og_titulo %}{{ marca.nombre }}: sepa lo que tiene, lo que vende y lo que gana{% endblock %}">
+  <meta property="og:description" content="{% block og_descripcion %}El punto de venta para bodegas y abastos. Cobre rapido, controle su mercancia y cuadre la caja todos los dias. Empiece gratis.{% endblock %}">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/compartir.png' %}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="es_VE">
+  <meta name="twitter:card" content="summary_large_image">
+  {% block robots %}{% endblock %}
+
   <link rel="stylesheet" href="{% static 'css/sitio.css' %}">
   <script src="{% static 'js/sitio.js' %}" defer></script>
   {% block cabeza %}{% endblock %}
@@ -52,8 +69,8 @@
     </div>
   </div>
 
-  {# El menu del telefono. Sin el, en 360 px no habria forma de saltar a los
-     precios sin bajar por toda la pagina. #}
+  {% comment %} El menu del telefono. Sin el, en 360 px no habria forma de saltar a los
+     precios sin bajar por toda la pagina. {% endcomment %}
   <nav id="menu-telefono" hidden class="md:hidden border-t border-borde bg-superficie"
        aria-label="Secciones">
     <div class="mx-auto max-w-6xl px-2 py-2 flex flex-col">

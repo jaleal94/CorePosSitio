@@ -58,7 +58,7 @@ constitucion, especificacion, plan, tareas, implementacion.
 | F0 | Fundacion: stack, calidad, integracion continua, Spec Kit | `v0.1.0-f0` |
 | F1 | La pagina: todas las secciones con su contenido real | `v0.2.0-f1` |
 | F2 | Captacion: formulario, panel de contactos y WhatsApp | `v0.3.0-f2` |
-| F3 | Cierre: privacidad, buscadores, capturas, endurecimiento | pendiente |
+| F3 | Cierre: capturas reales, compartir, buscadores y errores | `v1.0.0` |
 
 ### Lo que garantiza la suite
 
@@ -78,6 +78,27 @@ constitucion, especificacion, plan, tareas, implementacion.
 - **Los robots no pasan**: trampa invisible y limite por origen, con una
   respuesta que dice "espere", no "no tiene permiso".
 - **El panel no se ve sin sesion**, ni la exportacion.
+- **Las capturas son del sistema real** y existen: si falta una, la suite lo dice.
+- **Los datos estructurados salen de la misma declaracion** que los precios de
+  la pagina, asi que el buscador nunca anuncia un precio viejo.
+- **Ningun comentario de plantilla llega al navegador**: `{# #}` en Django es de
+  una sola linea y no avisa cuando no lo es.
+- **El peso aguanta con las imagenes dentro**: 33 KB la primera carga, 75 KB si
+  se baja la pagina entera.
+
+## Las capturas
+
+Las tres capturas de la seccion "Asi se ve" salen del sistema de verdad, con una
+bodega de ejemplo. Se regeneran cuando el sistema cambie de aspecto:
+
+```bash
+uv run --project ..\CoreAPP python herramientas/capturas.py
+uv run python herramientas/imagen_de_compartir.py
+```
+
+El guion usa Core Pos **como biblioteca**: lee su codigo, corre con su entorno,
+crea una base de datos aparte que despues borra, y no modifica ni un archivo del
+producto. Hace falta Edge o Chrome, solo para generar; no para servir el sitio.
 
 ## El panel de contactos
 

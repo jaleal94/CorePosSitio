@@ -12,6 +12,7 @@ from django.views.decorators.http import require_http_methods
 from django_ratelimit.decorators import ratelimit
 
 from . import contenido
+from .estructurados import datos_del_sitio
 from .formularios import FormularioDeContacto
 from .models import Contacto, EstadoContacto
 from .planes import INCLUIDO_EN_TODOS, PLANES
@@ -27,7 +28,7 @@ def _ip(request):
     return request.META.get("REMOTE_ADDR") or None
 
 
-def _contexto_de_portada(formulario):
+def _contexto_de_portada(formulario, request=None):
     return {
         "heroe": contenido.HEROE,
         "problemas": contenido.PROBLEMAS,
@@ -39,6 +40,7 @@ def _contexto_de_portada(formulario):
         "incluido": INCLUIDO_EN_TODOS,
         "preguntas": contenido.PREGUNTAS,
         "formulario": formulario,
+        "estructurados": datos_del_sitio(request) if request else "",
     }
 
 
@@ -71,11 +73,11 @@ def portada(request):
 
         # Se vuelve a la pagina con el formulario marcado y sin perder nada de
         # lo que escribio.
-        contexto = _contexto_de_portada(formulario)
+        contexto = _contexto_de_portada(formulario, request)
         contexto["hay_errores"] = True
         return render(request, "sitio/portada.html", contexto)
 
-    return render(request, "sitio/portada.html", _contexto_de_portada(formulario))
+    return render(request, "sitio/portada.html", _contexto_de_portada(formulario, request))
 
 
 def gracias(request):
@@ -85,6 +87,34 @@ def gracias(request):
 
 def privacidad(request):
     return render(request, "sitio/privacidad.html")
+
+
+def robots(request):
+    """Lo publico se indexa; el panel no.
+
+    Se sirve desde una vista y no como archivo estatico para que la direccion
+    del mapa salga de las rutas de verdad y no de un texto que envejece.
+    """
+    lineas = [
+        "User-agent: *",
+        "Allow: /$",
+        "Allow: /privacidad/",
+        "Disallow: /contactos/",
+        "Disallow: /gracias/",
+        "Disallow: /admin/",
+        "",
+        f"Sitemap: {request.scheme}://{request.get_host()}/sitemap.xml",
+    ]
+    texto = "\n".join(lineas)
+    return HttpResponse(texto, content_type="text/plain; charset=utf-8")
+
+
+def no_encontrado(request, exception=None):
+    return render(request, "sitio/errores/404.html", status=404)
+
+
+def fallo_del_servidor(request):
+    return render(request, "sitio/errores/500.html", status=500)
 
 
 # ------------------------------------------------------------------- el panel
