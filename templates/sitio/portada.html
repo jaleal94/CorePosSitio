@@ -135,52 +135,47 @@
 <c-seccion ancla="precios"
            sobretitulo="Sin letra chica"
            titulo="Cuanto cuesta"
-           entrada="Empiece gratis. Si le crece el negocio, cambie de plan cuando quiera.">
-  <div class="grid gap-4 md:grid-cols-3">
+           entrada="Un solo plan. El sistema completo, sin limites.">
+  {% comment %}
+    Una ficha, centrada. Antes eran tres en rejilla; dejar la unica ocupando un
+    tercio de la pantalla la haria parecer el resto de lo que hubo.
+
+    Los dos precios no se ven igual a proposito: la mensualidad manda y la
+    instalacion va debajo, mas pequena y con "una sola vez" pegado. Un precio de
+    entrada que se lee como mensual espanta, y uno mensual que se lee como unico
+    defrauda cuando llega el segundo mes.
+  {% endcomment %}
+  <div class="max-w-lg mx-auto">
     {% for plan in planes %}
-      <c-tarjeta destacada="{{ plan.destacado|yesno:'si,' }}" class="flex flex-col">
-        {% if plan.destacado %}
-          <p class="text-xs font-medium text-acento-fuerte">El que mas se usa</p>
-        {% endif %}
+      <c-tarjeta destacada="si" class="flex flex-col text-center">
         <h3 class="font-semibold text-lg">{{ plan.nombre }}</h3>
-        <p class="mt-1 text-sm text-tenue">{{ plan.para_quien }}</p>
+        <p class="mt-1 text-sm text-tenue">{{ plan.descripcion }}</p>
 
-        <p class="mt-4 text-3xl font-semibold tabular-nums">
+        <p class="mt-5 text-5xl font-semibold tabular-nums">
           {{ plan.precio_visible }}
-          {% if not plan.es_gratuito %}
-            <span class="text-sm font-normal text-tenue">al mes</span>
-          {% endif %}
+          <span class="text-base font-normal text-tenue">al mes</span>
         </p>
-        {% if plan.es_gratuito %}
-          <p class="text-sm text-sana">Sin tarjeta y sin tiempo limite</p>
-        {% endif %}
-
-        <ul class="mt-5 flex flex-col gap-1.5 text-sm text-tenue">
-          {% for limite in plan.limites %}
-            <li class="flex gap-2"><c-visto /><span>{{ limite }}</span></li>
-          {% endfor %}
-        </ul>
+        <p class="mt-2 text-sm text-tenue">
+          mas <span class="tabular-nums font-medium text-texto">{{ plan.instalacion_visible }}</span>
+          una sola vez, por la instalacion y la puesta en marcha
+        </p>
 
         <div class="mt-6 pt-5 border-t border-borde">
-          <c-boton href="#contacto" class="w-full"
-                   variante="{% if plan.destacado %}principal{% else %}apagado{% endif %}">
-            {% if plan.es_gratuito %}Empezar gratis{% else %}Quiero este plan{% endif %}
-          </c-boton>
+          <c-boton href="#contacto" class="w-full">Quiero Core Pos</c-boton>
         </div>
       </c-tarjeta>
     {% endfor %}
   </div>
 
-  <div class="mt-10 max-w-3xl">
-    <h3 class="font-semibold">Cualquier plan trae todo esto</h3>
+  <div class="mt-10 max-w-3xl mx-auto">
+    <h3 class="font-semibold">Todo esto va incluido</h3>
     <ul class="mt-3 grid gap-1.5 sm:grid-cols-2 text-sm text-tenue">
       {% for cosa in incluido %}
         <li class="flex gap-2"><c-visto /><span>{{ cosa }}</span></li>
       {% endfor %}
     </ul>
     <p class="mt-4 text-sm text-tenue">
-      Si se pasa de los limites de su plan, el sistema le avisa, pero nunca lo deja
-      sin poder vender.
+      La instalacion se paga una vez, al empezar. Despues solo la mensualidad.
     </p>
   </div>
 </c-seccion>
@@ -213,7 +208,7 @@
 <c-seccion ancla="contacto"
            sobretitulo="Empiece hoy"
            titulo="Dejenos sus datos y le escribimos"
-           entrada="Le mostramos como quedaria su negocio, sin compromiso y sin tarjeta.">
+           entrada="Le mostramos como quedaria su negocio y acordamos la instalacion.">
   <div class="grid gap-8 lg:grid-cols-2">
     <c-tarjeta>
       {% if hay_errores %}
@@ -268,8 +263,8 @@
       <div class="border-t border-borde pt-6">
         <h3 class="font-semibold">¿Prefiere verlo usted mismo?</h3>
         <p class="mt-1 text-sm text-tenue">
-          Pida su tienda de una vez, sin hablar con nadie. Es gratis y no pide
-          tarjeta.
+          Deje sus datos directamente en el sistema y nos ponemos de acuerdo
+          para instalarla.
         </p>
         <div class="mt-3">
           <c-boton href="{{ marca.app_url }}/solicitar/" variante="apagado">
