@@ -15,7 +15,7 @@ from . import contenido
 from .estructurados import datos_del_sitio
 from .formularios import FormularioDeContacto
 from .models import Contacto, EstadoContacto
-from .planes import INCLUIDO_EN_TODOS, PLANES
+from .planes import LO_QUE_TRAE, PLANES
 from .servicios import PLAZO_DE_RESPUESTA, enlace_de_whatsapp, registrar_contacto, sin_atender
 
 CLAVE_DE_GRACIAS = "contacto_recien_enviado"
@@ -37,7 +37,7 @@ def _contexto_de_portada(formulario, request=None):
         "no_hace": contenido.LO_QUE_NO_HACE,
         "capturas": contenido.CAPTURAS,
         "planes": PLANES,
-        "incluido": INCLUIDO_EN_TODOS,
+        "incluido": LO_QUE_TRAE,
         "preguntas": contenido.PREGUNTAS,
         "formulario": formulario,
         "estructurados": datos_del_sitio(request) if request else "",

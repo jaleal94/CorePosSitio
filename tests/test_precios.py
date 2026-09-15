@@ -22,6 +22,11 @@ RUTA_DEL_PRODUCTO = Path(
 )
 DECLARACION = RUTA_DEL_PRODUCTO / "apps" / "plataforma" / "planes.py"
 
+# Los dos numeros que se comparan. El de instalacion entra tambien porque es el
+# mas caro de equivocar: son 60 $ que alguien lee una vez y recuerda, y si
+# viviera solo en el sitio seria el unico precio que nadie verifica.
+PRECIOS = ("precio_mensual", "precio_instalacion")
+
 
 def planes_del_producto():
     """Lee los planes del producto sin importarlo: son dos proyectos distintos.
@@ -65,15 +70,18 @@ def test_los_planes_del_sitio_son_los_que_cobra_el_producto():
 
     for plan in PLANES:
         real = del_producto[plan.clave]
-        assert plan.precio_mensual == Decimal(str(real["precio_mensual"])), (
-            f"el plan {plan.clave} cuesta {real['precio_mensual']} en el sistema "
-            f"y el sitio dice {plan.precio_mensual}"
-        )
-        for limite in ("productos", "personal", "ventas_por_mes"):
-            assert getattr(plan, limite) == real[limite], (
-                f"el limite '{limite}' del plan {plan.clave} no cuadra: "
-                f"sistema {real[limite]}, sitio {getattr(plan, limite)}"
+        for precio in PRECIOS:
+            assert getattr(plan, precio) == Decimal(str(real[precio])), (
+                f"el {precio.replace('_', ' ')} del plan {plan.clave} no cuadra: "
+                f"sistema {real[precio]}, sitio {getattr(plan, precio)}"
             )
+
+
+def test_el_plan_del_sitio_no_anuncia_limites_que_el_producto_no_tiene():
+    """El producto no tiene topes. Anunciar uno para llenar la ficha seria mentir."""
+    for plan in PLANES:
+        for tope in ("productos", "personal", "ventas_por_mes", "limites"):
+            assert not hasattr(plan, tope), f"el plan del sitio anuncia {tope}"
 
 
 # Esta si corre siempre, aunque el producto no este a mano. Cubre el error mas
@@ -91,7 +99,7 @@ def test_ningun_precio_esta_escrito_a_mano_en_la_plantilla():
     sin_atributos = re.sub(r'\w+="[^"]*"', " ", seccion)
 
     for plan in PLANES:
-        cifras = (plan.precio_mensual, plan.productos, plan.personal, plan.ventas_por_mes)
+        cifras = (plan.precio_mensual, plan.precio_instalacion)
         # Se ignoran las de una sola cifra: aparecen en cualquier texto y no
         # demuestran nada.
         for numero in (n for n in cifras if len(str(n)) > 1):
@@ -110,27 +118,31 @@ def test_la_plantilla_recorre_la_declaracion():
 
     assert "{% for plan in planes %}" in seccion
     assert "plan.precio_visible" in seccion
-    assert "plan.limites" in seccion
+    assert "plan.instalacion_visible" in seccion
 
 
 @pytest.mark.django_db
-def test_los_tres_planes_se_ven_con_su_precio(client):
+def test_el_plan_se_ve_con_sus_dos_precios(client):
     cuerpo = client.get(reverse("sitio:portada")).content.decode()
 
     for plan in PLANES:
         assert plan.nombre in cuerpo
         assert plan.precio_visible in cuerpo
+        assert plan.instalacion_visible in cuerpo
 
 
 @pytest.mark.django_db
-def test_se_dice_que_el_de_entrada_es_gratis_y_sin_tarjeta(client):
-    """Es lo que quita el miedo a probarlo."""
-    cuerpo = client.get(reverse("sitio:portada")).content.decode()
+def test_se_dice_que_la_instalacion_se_paga_una_sola_vez(client):
+    """Un precio de entrada que se lee como mensual espanta.
 
-    assert "Gratis" in cuerpo
-    assert "sin tarjeta" in cuerpo.lower()
+    Y uno mensual que se lee como unico defrauda al llegar el segundo mes. La
+    diferencia tiene que estar dicha con palabras, no solo con el tamano.
+    """
+    cuerpo = client.get(reverse("sitio:portada")).content.decode().lower()
+
+    assert "una sola vez" in cuerpo
+    assert "instalacion" in cuerpo
 
 
-def test_hay_exactamente_un_plan_destacado():
-    """Dos destacados no destacan nada, y ninguno deja la eleccion sin guia."""
-    assert sum(1 for plan in PLANES if plan.destacado) == 1
+def test_hay_un_solo_plan():
+    assert len(PLANES) == 1

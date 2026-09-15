@@ -60,6 +60,7 @@ constitucion, especificacion, plan, tareas, implementacion.
 | F2 | Captacion: formulario, panel de contactos y WhatsApp | `v0.3.0-f2` |
 | F3 | Cierre: capturas reales, compartir, buscadores y errores | `v1.0.0` |
 | F4 | Identidad visual: el logo, la paleta de la marca y los campos | `v1.1.0` |
+| F5 | Plan unico: 19,99 $ al mes mas 60 $ de instalacion | `v1.2.0` |
 
 ### Lo que garantiza la suite
 
@@ -70,8 +71,13 @@ constitucion, especificacion, plan, tareas, implementacion.
   se note en produccion.
 - **Se habla en lenguaje de comercio**: una prueba recorre la pagina y falla si
   aparece una palabra de programador. La lista esta en `tests/test_contenido.py`.
-- **Los precios cuadran con el producto**: se comparan contra la declaracion de
-  Core Pos, y ningun numero puede estar escrito a mano en la plantilla.
+- **Los precios cuadran con el producto**: los dos -la mensualidad y la
+  instalacion- se comparan contra la declaracion de Core Pos, y ninguno puede
+  estar escrito a mano en la plantilla.
+- **El sitio no promete nada que dejo de ser cierto**: una prueba pide cada
+  pagina publica y falla si vuelve a aparecer "gratis", "sin tarjeta" o "sin
+  compromiso". Tambien mira la imagen que se ve al compartir, donde la promesa
+  serian pixeles que ninguna busqueda de texto encuentra.
 - **La primera carga cabe en 150 KB** comprimidos. Hoy pesa 12 KB.
 - **Se dice lo que el producto no hace**, y hay una prueba que lo exige.
 - **Ningun contacto se pierde**: se guarda antes que nada, y un reenvio del mismo
@@ -93,6 +99,16 @@ constitucion, especificacion, plan, tareas, implementacion.
   estilos y no de una copia.
 - **El logo es el mismo archivo**, byte a byte: hay una sola copia del original,
   y vive en Core Pos.
+
+## El precio
+
+Hay **un solo plan**: 19,99 $ al mes, mas 60 $ una sola vez por la instalacion.
+Los dos numeros salen de `sitio/planes.py`, y una prueba los compara con los que
+declara Core Pos en `apps/plataforma/planes.py`. Ninguno puede escribirse a mano
+en la plantilla.
+
+El sitio **capta**; no cobra. No hay pasarela de pago: quien llega deja sus
+datos o pide su tienda, y el cobro se acuerda por fuera antes de aprobarla.
 
 ## La marca
 

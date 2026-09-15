@@ -18,7 +18,7 @@ HEROE = {
         "El punto de venta para bodegas y abastos. Cobre rapido, controle su "
         "mercancia y cuadre la caja todos los dias."
     ),
-    "apoyo": "Funciona en el telefono del mostrador. Empiece gratis, sin tarjeta.",
+    "apoyo": "Funciona en el telefono del mostrador. Un solo plan, sin limites.",
 }
 
 
@@ -262,10 +262,11 @@ PREGUNTAS = (
     Pregunta(
         pregunta="¿Cuanto cuesta y hay que pagar por adelantado?",
         respuesta=(
-            "El plan de entrada es gratis y no pide tarjeta. Los otros dos se "
-            "pagan por mes y se puede cambiar de plan cuando quiera. Si se pasa "
-            "de los limites de su plan, el sistema le avisa, pero nunca lo deja "
-            "sin poder vender."
+            "Hay un solo plan: 19,99 $ al mes. Ademas se paga una vez 60 $ por "
+            "la instalacion y la puesta en marcha, al empezar. Despues solo la "
+            "mensualidad. No hay limites de productos, de personal ni de "
+            "ventas, y no hay contrato de permanencia: si se quiere ir, se "
+            "lleva sus datos."
         ),
     ),
     Pregunta(

@@ -1,13 +1,23 @@
-"""Los tres planes, declarados una sola vez.
+"""El plan, declarado una sola vez.
 
-Ni un numero de plan escrito a mano en una plantilla: la pagina recorre esto.
-Hay dos pruebas que lo sostienen —una que compara estos numeros con los que
-Core Pos cobra de verdad, y otra que comprueba que la plantilla no los escriba
-por su cuenta— porque un precio que dice una cosa en el sitio y otra en el
-sistema es la peor forma de empezar una relacion con un cliente.
+Hay uno: 19,99 $ al mes, mas 60 $ una sola vez por la instalacion.
 
-La forma es la misma que en el producto a proposito: hace la comparacion obvia
-y el dia que se genere automaticamente no habra que traducir nada.
+Ni un numero escrito a mano en una plantilla. Hay dos pruebas que lo sostienen
+—una que compara estos numeros con los que Core Pos declara de verdad, y otra
+que comprueba que la plantilla no los escriba por su cuenta— porque un precio
+que dice una cosa en el sitio y otra en el sistema es la peor forma de empezar
+una relacion con un cliente.
+
+**Los dos numeros se comparan, no solo la mensualidad.** El de instalacion es el
+mas caro de equivocar: son 60 $ que alguien lee una vez y recuerda. Si viviera
+solo aqui, seria el unico numero de la pagina que nadie verifica contra el
+sistema.
+
+**El plan no tiene limites**, y por eso no se anuncia ninguno. La tentacion
+seria poner "hasta 2.000 productos" para que la ficha se vea llena; seria
+mentira, y aqui no se dice nada que no sea cierto.
+
+La forma es la misma que en el producto a proposito: hace la comparacion obvia.
 """
 
 from dataclasses import dataclass
@@ -19,69 +29,35 @@ class Plan:
     clave: str
     nombre: str
     precio_mensual: Decimal
-    productos: int
-    personal: int
-    ventas_por_mes: int
+    precio_instalacion: Decimal
     descripcion: str
-    # Para quien es, dicho como lo diria ella. No sale del producto: es venta.
-    para_quien: str
-    destacado: bool = False
-
-    @property
-    def es_gratuito(self):
-        return self.precio_mensual == 0
 
     @property
     def precio_visible(self):
-        return "Gratis" if self.es_gratuito else f"${self.precio_mensual:.0f}"
+        """Con sus centimos: 19,99 redondeado a entero dice 20, que es otro precio."""
+        return f"${self.precio_mensual:.2f}"
 
     @property
-    def limites(self):
-        """Los tres limites, listos para la plantilla."""
-        return [
-            f"Hasta {self.productos:,} productos".replace(",", "."),
-            f"{self.personal} {'persona' if self.personal == 1 else 'personas'} con acceso",
-            f"{self.ventas_por_mes:,} ventas al mes".replace(",", "."),
-        ]
+    def instalacion_visible(self):
+        return f"${self.precio_instalacion:.2f}"
 
 
-PLANES = (
-    Plan(
-        clave="basico",
-        nombre="Basico",
-        precio_mensual=Decimal("0"),
-        productos=300,
-        personal=2,
-        ventas_por_mes=1500,
-        descripcion="Para empezar: una bodega chica con una o dos personas.",
-        para_quien="Si esta empezando o quiere probarlo sin arriesgar nada.",
-    ),
-    Plan(
-        clave="comercio",
-        nombre="Comercio",
-        precio_mensual=Decimal("12"),
-        productos=2000,
-        personal=6,
-        ventas_por_mes=10000,
-        descripcion="Para un abasto con varias cajas y un encargado de inventario.",
-        para_quien="Si tiene dos cajas, alguien encargado del inventario, y fia.",
-        destacado=True,
-    ),
-    Plan(
-        clave="cadena",
-        nombre="Cadena",
-        precio_mensual=Decimal("35"),
-        productos=20000,
-        personal=25,
-        ventas_por_mes=60000,
-        descripcion="Para un comercio grande, con catalogo amplio y mucho personal.",
-        para_quien="Si maneja un catalogo grande y varios turnos de personal.",
-    ),
+EL_PLAN = Plan(
+    clave="unico",
+    nombre="Core Pos",
+    precio_mensual=Decimal("19.99"),
+    precio_instalacion=Decimal("60"),
+    descripcion="El sistema completo, sin limites de catalogo ni de personal.",
 )
 
-# Lo que trae cualquier plan. Se lista aparte para que no parezca que el plan de
-# entrada es una version recortada: es el mismo sistema, con otros limites.
-INCLUIDO_EN_TODOS = (
+# Se deja el plural para que la plantilla siga recorriendo una lista: el dia que
+# haya un segundo plan no habra que tocar el HTML, solo esto.
+PLANES = (EL_PLAN,)
+
+# Lo que trae. Antes se listaba aparte para que el plan de entrada no pareciera
+# una version recortada; ahora no hay de que recortarse, pero la lista se queda:
+# es lo que de verdad convence, y es mas larga que cualquier ficha de precio.
+LO_QUE_TRAE = (
     "Punto de venta con codigo de barras",
     "Control de inventario y costos",
     "Cierre de caja diario",
@@ -89,5 +65,6 @@ INCLUIDO_EN_TODOS = (
     "Compras a proveedores",
     "Reportes de ventas y ganancia",
     "Precio en divisa y cobro en bolivares",
+    "Sin limite de productos, de personal ni de ventas",
     "Sus datos, exportables cuando quiera",
 )
