@@ -80,9 +80,7 @@ def main():
     # Antes aqui decia "Empiece gratis, sin tarjeta". Dejo de ser cierto cuando
     # se paso al plan unico, y es la frase que mas gente ve: la que aparece en
     # la tarjeta de WhatsApp cuando un comerciante le pasa el enlace a otro.
-    lienzo.text(
-        (80, 468), "Un solo plan, sin limites.", font=tipografia(34), fill=colores["tenue"]
-    )
+    lienzo.text((80, 468), "Un solo plan, sin limites.", font=tipografia(34), fill=colores["tenue"])
 
     DESTINO.parent.mkdir(parents=True, exist_ok=True)
     imagen.save(DESTINO, "PNG", optimize=True)

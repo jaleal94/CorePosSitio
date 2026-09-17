@@ -57,8 +57,7 @@ def test_ninguna_pagina_promete_que_es_gratis(client, nombre):
     leible = texto_de(cuerpo)
     encontradas = [p.pattern for p in PROMESAS if p.search(leible)]
     assert not encontradas, (
-        f"{nombre} sigue prometiendo: {encontradas}. "
-        "Ya no hay plan gratuito ni prueba sin pagar."
+        f"{nombre} sigue prometiendo: {encontradas}. Ya no hay plan gratuito ni prueba sin pagar."
     )
 
 
