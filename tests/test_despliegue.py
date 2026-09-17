@@ -108,11 +108,17 @@ def test_los_cursores_de_servidor_estan_apagados():
 
     No es teorico: la exportacion de contactos usa `.iterator()`, que abre uno.
     Sin esto, esa pantalla falla en produccion y en ningun otro sitio.
-    """
-    import importlib
 
-    vercel = importlib.import_module("config.settings.vercel")
-    assert vercel.DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] is True
+    Se lee el archivo en vez de importarlo: importarlo arrastra `prod.py`, que
+    se niega a cargarse sin las variables de produccion puestas -y hace bien-.
+    """
+    ajustes = (RAIZ / "config" / "settings" / "vercel.py").read_text(encoding="utf-8")
+    assert 'DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True' in ajustes
+
+    vistas = (RAIZ / "sitio" / "views.py").read_text(encoding="utf-8")
+    assert ".iterator()" in vistas, (
+        "Si ya nadie usa .iterator(), esta prueba y su ajuste pueden revisarse"
+    )
 
 
 def test_el_env_nunca_sube():
