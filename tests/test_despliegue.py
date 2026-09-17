@@ -100,6 +100,21 @@ def test_la_construccion_no_corre_migraciones():
     assert "manage.py migrate" not in guion
 
 
+def test_los_cursores_de_servidor_estan_apagados():
+    """El endpoint agrupado de Neon es PgBouncer en modo transaccion.
+
+    Ahi un cursor de servidor se declara en una transaccion y la siguiente
+    lectura puede caer en otra conexion, donde ese cursor no existe.
+
+    No es teorico: la exportacion de contactos usa `.iterator()`, que abre uno.
+    Sin esto, esa pantalla falla en produccion y en ningun otro sitio.
+    """
+    import importlib
+
+    vercel = importlib.import_module("config.settings.vercel")
+    assert vercel.DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] is True
+
+
 def test_el_env_nunca_sube():
     assert ".env" in (RAIZ / ".vercelignore").read_text(encoding="utf-8")
 

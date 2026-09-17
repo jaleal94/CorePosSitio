@@ -38,3 +38,19 @@ STORAGES = {
 # vivas aqui solo consigue agotar el limite de conexiones de la base con
 # conexiones que nadie va a reutilizar.
 DATABASES["default"]["CONN_MAX_AGE"] = 0
+
+# En serverless hay que conectarse por el endpoint agrupado -el que lleva
+# `-pooler` en el nombre-, o cuarenta funciones a la vez agotan las conexiones
+# de la base. Ese agrupador es PgBouncer en modo transaccion, y ahi **los
+# cursores de servidor no funcionan**: el cursor se declara en una transaccion y
+# la siguiente lectura puede caer en otra conexion distinta, donde ese cursor no
+# existe.
+#
+# Esto no es teorico aqui: `sitio/views.py` exporta los contactos con
+# `.iterator()`, que es justamente lo que abre uno. Sin esta linea, la
+# exportacion falla en produccion y en ningun otro sitio.
+#
+# Django trae el interruptor documentado para este caso. Lo que cuesta es que
+# `.iterator()` deja de ahorrar memoria y trae todo de una vez; con una lista de
+# contactos de un sitio de presentacion, da igual.
+DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True
