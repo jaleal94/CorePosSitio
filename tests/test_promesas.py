@@ -17,6 +17,7 @@ plantillas encontraria cinco de las seis y dejaria pasar la que se arma en
 `contenido.py`.
 """
 
+import ast
 import re
 from pathlib import Path
 
@@ -77,16 +78,39 @@ def test_tampoco_lo_promete_en_lo_que_no_se_ve(client, nombre):
         assert not encontradas, f"{nombre} promete {encontradas} en: {contenido[:90]}"
 
 
+def frases_del_guion(ruta):
+    """Todos los textos escritos en un archivo de Python.
+
+    Se analiza el arbol y no el texto. Una expresion regular sobre el codigo
+    depende de donde caigan los saltos de linea, y eso lo decide el formateador:
+    la primera version de esta prueba encontraba una de las dos frases que la
+    imagen dibuja, y pasaba en verde sin mirar la otra. Una prueba que no
+    comprueba lo que dice que comprueba es peor que no tenerla.
+
+    Los comentarios no estan en el arbol, asi que el que explica por que se
+    quito "Empiece gratis" no se cuenta como si la dibujara.
+    """
+    arbol = ast.parse(ruta.read_text(encoding="utf-8"))
+    return [
+        nodo.value
+        for nodo in ast.walk(arbol)
+        if isinstance(nodo, ast.Constant) and isinstance(nodo.value, str)
+    ]
+
+
 def test_la_imagen_de_compartir_tampoco_lo_promete():
     """Ahi la promesa son pixeles, y ninguna prueba de texto la agarra.
 
     Se comprueba sobre el guion que la dibuja, que es lo unico honesto que se
     puede comprobar sin leer una imagen.
     """
-    guion = (RAIZ / "herramientas" / "imagen_de_compartir.py").read_text(encoding="utf-8")
-    # Solo las cadenas que se dibujan, no los comentarios que explican por que
-    # se quitaron.
-    dibujadas = re.findall(r'^\s*(?:\(80, \d+\),\s*)?"([^"]{10,})"', guion, re.M)
-    for frase in dibujadas:
+    guion = RAIZ / "herramientas" / "imagen_de_compartir.py"
+    frases = frases_del_guion(guion)
+    assert any("bodegas y abastos" in frase for frase in frases), (
+        "La prueba no esta encontrando lo que la imagen dibuja: revisela antes "
+        "de confiar en que esta en verde"
+    )
+
+    for frase in frases:
         encontradas = [p.pattern for p in PROMESAS if p.search(frase)]
         assert not encontradas, f"La imagen de compartir dibuja {encontradas}: {frase!r}"
