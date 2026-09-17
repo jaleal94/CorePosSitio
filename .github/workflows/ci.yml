@@ -51,6 +51,22 @@ jobs:
           DJANGO_SECRET_KEY: ci-8f2b1ad49e7c4056b8d2f14a9c6e03b75d81af24e9c05b6d3a7f18e2c4b09d5a
         run: uv run python manage.py check --deploy --fail-level WARNING --settings=config.settings.prod
 
+      # La de arriba es la de un servidor normal. Esta es la que corre de verdad
+      # en produccion hoy, y hereda de aquella: si alguien la rompe, se entera
+      # aqui y no en el primer despliegue.
+      - name: Verificacion de despliegue (settings de Vercel)
+        env:
+          DJANGO_ALLOWED_HOSTS: corepos.example.com
+          DJANGO_SECRET_KEY: ci-8f2b1ad49e7c4056b8d2f14a9c6e03b75d81af24e9c05b6d3a7f18e2c4b09d5a
+        run: uv run python manage.py check --deploy --fail-level WARNING --settings=config.settings.vercel
+
+      # Vercel instala de requirements.txt, no de uv.lock. Si se separan, el
+      # despliegue arranca sin una dependencia y revienta al primer visitante.
+      - name: requirements.txt al dia
+        run: |
+          uv export --no-dev --no-hashes --no-annotate --no-header             --format requirements-txt > /tmp/requirements-esperado.txt
+          diff -u requirements.txt /tmp/requirements-esperado.txt             || (echo "::error::requirements.txt quedo viejo: regenerelo (ver README)" && exit 1)
+
       - name: Migraciones sin cambios pendientes
         run: uv run python manage.py makemigrations --check --dry-run --settings=config.settings.test
 
