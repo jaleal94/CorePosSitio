@@ -43,5 +43,5 @@ class Command(BaseCommand):
                 base, version = cursor.fetchone()
             self.stdout.write(f"\n  Conecto bien a '{base}'.")
             self.stdout.write(f"  {version.split(',')[0]}")
-        except Exception as error:  # noqa: BLE001
+        except Exception as error:
             self.stdout.write(self.style.ERROR(f"\n  No se pudo conectar: {error}"))
