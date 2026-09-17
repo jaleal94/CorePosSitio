@@ -122,13 +122,13 @@ dependencies = [
     { name = "django-environ" },
     { name = "django-htmx" },
     { name = "django-ratelimit" },
-    { name = "pillow" },
     { name = "psycopg", extra = ["binary"] },
     { name = "whitenoise" },
 ]
 
 [package.dev-dependencies]
 dev = [
+    { name = "pillow" },
     { name = "pip-audit" },
     { name = "pre-commit" },
     { name = "pytest" },
@@ -145,13 +145,13 @@ requires-dist = [
     { name = "django-environ", specifier = ">=0.12" },
     { name = "django-htmx", specifier = ">=1.21" },
     { name = "django-ratelimit", specifier = ">=4.1" },
-    { name = "pillow", specifier = ">=12.3.0" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
     { name = "whitenoise", specifier = ">=6.9" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "pillow", specifier = ">=12.3.0" },
     { name = "pip-audit", specifier = ">=2.7" },
     { name = "pre-commit", specifier = ">=4.0" },
     { name = "pytest", specifier = ">=8.3" },

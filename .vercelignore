@@ -1,0 +1,25 @@
+# Lo que no tiene por que subir al servidor.
+.venv/
+.git/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+
+# El binario de Tailwind pesa mas de 100 MB y solo sirve para compilar en
+# desarrollo: la hoja ya compilada esta versionada en static/css/.
+tailwindcss.exe
+tailwindcss
+
+# Los guiones que se corren a mano, y lo que necesitan.
+herramientas/
+assets/
+tests/
+specs/
+docs/
+.github/
+
+# Nunca.
+.env
