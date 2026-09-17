@@ -100,6 +100,44 @@ constitucion, especificacion, plan, tareas, implementacion.
 - **El logo es el mismo archivo**, byte a byte: hay una sola copia del original,
   y vive en Core Pos.
 
+## Despliegue en Vercel
+
+Los archivos estan en el repositorio: `vercel.json`, `api/index.py`,
+`build_files.sh`, `requirements.txt` y `config/settings/vercel.py`. Las
+variables que hay que cargar en el panel estan en `.env.produccion.example`.
+
+Dos cosas que Vercel obliga a hacer distinto, por si alguien las toca:
+
+**Los estaticos no los sirve Django.** Los sirve la red de Vercel, desde lo que
+`build_files.sh` deja al construir. Por eso `config/settings/vercel.py` usa un
+almacenamiento sin hash en el nombre: el que lo agrega escribe un
+`staticfiles.json` durante la construccion de los estaticos, y la funcion de
+Python es otra construccion que no lo tendria. Sin ese archivo, cada
+`{% static %}` revienta.
+
+**El limite del formulario necesita una cache compartida.** `django-ratelimit`
+lleva la cuenta en la cache de Django, y sin declarar ninguna esa cache es la
+memoria del proceso. En Vercel casi cada peticion es un proceso nuevo: el
+limite deja de limitar y no avisa. `prod.py` declara la cache en la tabla
+`cache_del_sitio`, que crea la migracion `sitio/0002`.
+
+**Las migraciones no corren solas.** `build_files.sh` no las ejecuta a
+proposito: la construccion se dispara en cada despliegue y puede haber dos a la
+vez. Se corren una vez, desde su maquina, contra la base de produccion:
+
+```bash
+DATABASE_URL="postgres://..." DJANGO_DEBUG=False DJANGO_SECRET_KEY="..." DJANGO_ALLOWED_HOSTS="su-dominio" uv run python manage.py migrate --settings=config.settings.vercel
+```
+
+Al agregar una dependencia hay que regenerar la lista que lee Vercel, porque no
+entiende `uv`:
+
+```bash
+uv export --no-dev --no-hashes --no-annotate --no-header     --format requirements-txt > requirements.txt
+```
+
+Hay una prueba que falla si se olvida.
+
 ## El precio
 
 Hay **un solo plan**: 19,99 $ al mes, mas 60 $ una sola vez por la instalacion.

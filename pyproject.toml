@@ -12,11 +12,14 @@ dependencies = [
     "django-cotton>=1.5",
     "django-htmx>=1.21",
     "django-csp>=4.0",
-    "pillow>=12.3.0",
 ]
 
 [dependency-groups]
+# Pillow solo lo usan los guiones de `herramientas/` -la imagen de compartir y
+# los archivos del logo-, que se corren a mano. Nada de `sitio/` ni de
+# `config/` lo importa, asi que no tiene por que viajar al servidor.
 dev = [
+    "pillow>=12.3.0",
     "pytest>=8.3",
     "pytest-django>=4.9",
     "pytest-cov>=6.0",

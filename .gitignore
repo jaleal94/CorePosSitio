@@ -9,3 +9,4 @@ htmlcov/
 /static_recolectado/
 *.sqlite3
 tailwindcss.exe
+estaticos_de_vercel/
