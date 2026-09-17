@@ -123,10 +123,15 @@ limite deja de limitar y no avisa. `prod.py` declara la cache en la tabla
 
 **Las migraciones no corren solas.** `build_files.sh` no las ejecuta a
 proposito: la construccion se dispara en cada despliegue y puede haber dos a la
-vez. Se corren una vez, desde su maquina, contra la base de produccion:
+vez. Se corren una vez, desde su maquina, contra la base de produccion.
 
-```bash
-DATABASE_URL="postgres://..." DJANGO_DEBUG=False DJANGO_SECRET_KEY="..." DJANGO_ALLOWED_HOSTS="su-dominio" uv run python manage.py migrate --settings=config.settings.vercel
+Antes de migrar, **compruebe a donde apunta**. El `.env` de desarrollo apunta a
+la base local y las variables del entorno le ganan: si falta una, `migrate` no
+falla, migra la base local y dice que todo salio bien.
+
+```powershell
+uv run python manage.py donde_estoy --settings=config.settings.vercel
+uv run python manage.py migrate      --settings=config.settings.vercel
 ```
 
 Al agregar una dependencia hay que regenerar la lista que lee Vercel, porque no
