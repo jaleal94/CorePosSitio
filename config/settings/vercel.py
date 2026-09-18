@@ -39,12 +39,11 @@ STORAGES = {
 # conexiones que nadie va a reutilizar.
 DATABASES["default"]["CONN_MAX_AGE"] = 0
 
-# En serverless hay que conectarse por el endpoint agrupado -el que lleva
-# `-pooler` en el nombre-, o cuarenta funciones a la vez agotan las conexiones
-# de la base. Ese agrupador es PgBouncer en modo transaccion, y ahi **los
-# cursores de servidor no funcionan**: el cursor se declara en una transaccion y
-# la siguiente lectura puede caer en otra conexion distinta, donde ese cursor no
-# existe.
+# En serverless hay que conectarse por el agrupador del proveedor, o cuarenta
+# funciones a la vez agotan las conexiones de la base. Esos agrupadores
+# -PgBouncer, Supavisor- trabajan en modo transaccion, y ahi **los cursores de
+# servidor no funcionan**: el cursor se declara en una transaccion y la
+# siguiente lectura puede caer en otra conexion distinta, donde no existe.
 #
 # Esto no es teorico aqui: `sitio/views.py` exporta los contactos con
 # `.iterator()`, que es justamente lo que abre uno. Sin esta linea, la

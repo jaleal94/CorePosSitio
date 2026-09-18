@@ -54,8 +54,8 @@ prueba. Se comitio fallando y se corrigio en el commit siguiente.
 
 ### Lo que queda en manos de otro
 
-**Los respaldos.** Neon los hace; hay que confirmar la retencion y **probar una
-restauracion**. Un respaldo que nunca se restauro no es un respaldo, y esto
+**Los respaldos.** Los hace quien provea la base; hay que confirmar la
+retencion y **probar una restauracion**. Un respaldo que nunca se restauro no es un respaldo, y esto
 sigue sin poder comprobarlo ninguna prueba.
 
 **La version de Python.** El proyecto pide 3.13. Si Vercel solo ofreciera 3.12,

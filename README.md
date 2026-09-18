@@ -134,16 +134,25 @@ uv run python manage.py donde_estoy --settings=config.settings.vercel
 uv run python manage.py migrate      --settings=config.settings.vercel
 ```
 
-### Si desde aqui no se puede alcanzar la base
+### El puerto importa
 
-Hay proveedores de internet que bloquean el puerto 5432. El sintoma es
-`server closed the connection unexpectedly`, y se confirma asi:
+**Bastantes proveedores de internet bloquean el puerto 5432.** El sintoma es
+`server closed the connection unexpectedly`, que parece un fallo del servidor y
+es de la red. Se comprueba asi:
 
 ```powershell
-Test-NetConnection SU-HOST-DE-NEON -Port 5432
+Test-NetConnection SU-ANFITRION -Port 5432
 ```
 
-Para eso esta el flujo **Migrar produccion** en GitHub Actions
+Por eso la cadena de produccion es la del **agrupador en modo transaccion**, que
+escucha en otro puerto: en Supabase el 6543. Eso resuelve las dos cosas a la
+vez -las conexiones en serverless y poder migrar desde una maquina cualquiera-.
+
+`donde_estoy` avisa si la conexion va por el 5432 y no responde.
+
+### Si aun asi no se puede desde aqui
+
+Esta el flujo **Migrar produccion** en GitHub Actions
 (`.github/workflows/migrar.yml`). Se dispara a mano desde la pestaña Actions,
 corre desde la red de GitHub, y la clave vive en los secretos del repositorio en
 vez de en la maquina de nadie. Pide escribir "migrar" para confirmar, dice a que

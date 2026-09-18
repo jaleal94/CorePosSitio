@@ -101,7 +101,7 @@ def test_la_construccion_no_corre_migraciones():
 
 
 def test_los_cursores_de_servidor_estan_apagados():
-    """El endpoint agrupado de Neon es PgBouncer en modo transaccion.
+    """Los agrupadores de conexiones funcionan en modo transaccion.
 
     Ahi un cursor de servidor se declara en una transaccion y la siguiente
     lectura puede caer en otra conexion, donde ese cursor no existe.
