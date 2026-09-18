@@ -1,0 +1,68 @@
+name: Migrar produccion
+
+# Se dispara a mano, nunca sola. Migrar es la unica operacion de este
+# repositorio que cambia datos que no se pueden recuperar solos, y no puede
+# depender de que alguien empuje una rama sin darse cuenta.
+on:
+  workflow_dispatch:
+    inputs:
+      confirmar:
+        description: 'Escriba "migrar" para confirmar'
+        required: true
+        default: ""
+      crear_usuario:
+        description: "Crear tambien el usuario del panel de contactos"
+        type: boolean
+        default: false
+
+jobs:
+  migrar:
+    runs-on: ubuntu-latest
+    # El entorno permite exigir una aprobacion antes de correr, si se configura.
+    environment: produccion
+
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+      DJANGO_ALLOWED_HOSTS: localhost
+      DJANGO_DEBUG: "False"
+      DJANGO_SETTINGS_MODULE: config.settings.vercel
+
+    steps:
+      - name: Confirmar que fue a proposito
+        run: |
+          if [ "${{ inputs.confirmar }}" != "migrar" ]; then
+            echo "::error::Escriba 'migrar' en el campo de confirmacion."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+
+      - name: Instalar uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Instalar dependencias
+        run: uv sync --frozen
+
+      # Antes de tocar nada, decir a donde apunta. Si un dia alguien cambia el
+      # secreto y apunta a otra base, esto sale en el registro.
+      - name: A que base apunta
+        run: uv run python manage.py donde_estoy
+
+      - name: Que va a cambiar
+        run: uv run python manage.py migrate --plan
+
+      - name: Migrar
+        run: uv run python manage.py migrate --no-input
+
+      # El sitio usa el usuario estandar de Django, que entra por nombre de
+      # usuario y no por correo. `--no-input` lee las tres de estas variables.
+      - name: Crear el usuario del panel
+        if: ${{ inputs.crear_usuario }}
+        env:
+          DJANGO_SUPERUSER_USERNAME: ${{ secrets.PANEL_USUARIO }}
+          DJANGO_SUPERUSER_EMAIL: ${{ secrets.PANEL_CORREO }}
+          DJANGO_SUPERUSER_PASSWORD: ${{ secrets.PANEL_CLAVE }}
+        run: uv run python manage.py createsuperuser --no-input

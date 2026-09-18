@@ -134,6 +134,24 @@ uv run python manage.py donde_estoy --settings=config.settings.vercel
 uv run python manage.py migrate      --settings=config.settings.vercel
 ```
 
+### Si desde aqui no se puede alcanzar la base
+
+Hay proveedores de internet que bloquean el puerto 5432. El sintoma es
+`server closed the connection unexpectedly`, y se confirma asi:
+
+```powershell
+Test-NetConnection SU-HOST-DE-NEON -Port 5432
+```
+
+Para eso esta el flujo **Migrar produccion** en GitHub Actions
+(`.github/workflows/migrar.yml`). Se dispara a mano desde la pestaña Actions,
+corre desde la red de GitHub, y la clave vive en los secretos del repositorio en
+vez de en la maquina de nadie. Pide escribir "migrar" para confirmar, dice a que
+base apunta y muestra el plan antes de aplicarlo.
+
+Secretos que necesita: `DATABASE_URL`, `DJANGO_SECRET_KEY`, y para crear el
+usuario del panel `PANEL_USUARIO`, `PANEL_CORREO` y `PANEL_CLAVE`.
+
 Al agregar una dependencia hay que regenerar la lista que lee Vercel, porque no
 entiende `uv`:
 
