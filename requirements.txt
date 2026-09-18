@@ -9,5 +9,6 @@ packaging==26.3
 psycopg==3.3.5
 psycopg-binary==3.3.5 ; implementation_name != 'pypy'
 sqlparse==0.6.0
+typing-extensions==4.16.0 ; python_full_version < '3.13'
 tzdata==2026.3 ; sys_platform == 'win32'
 whitenoise==6.12.0

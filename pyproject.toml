@@ -2,7 +2,10 @@
 name = "core-pos-sitio"
 version = "0.1.0"
 description = "Sitio de presentacion de Core Pos"
-requires-python = ">=3.13,<3.14"
+# Vercel construye y ejecuta con 3.12, asi que declarar 3.13 seria decir algo
+# que no es cierto. El codigo no usa nada exclusivo de 3.13: se comprobo
+# corriendolo entero en 3.12 y en 3.14.
+requires-python = ">=3.12,<3.15"
 dependencies = [
     "django>=5.2,<5.3",
     "psycopg[binary]>=3.2",
@@ -30,7 +33,7 @@ dev = [
 
 [tool.ruff]
 line-length = 100
-target-version = "py313"
+target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "DJ", "C4", "SIM", "RUF"]
