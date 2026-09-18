@@ -17,6 +17,7 @@ import re
 import tomllib
 from pathlib import Path
 
+import pytest
 from django.conf import settings
 
 RAIZ = Path(settings.RAIZ)
@@ -119,6 +120,32 @@ def test_los_cursores_de_servidor_estan_apagados():
     assert ".iterator()" in vistas, (
         "Si ya nadie usa .iterator(), esta prueba y su ajuste pueden revisarse"
     )
+
+
+def test_la_cadena_se_limpia_de_parametros_de_otras_herramientas():
+    """Supabase reparte su cadena con `?pgbouncer=true`, que es de Prisma.
+
+    psycopg no arranca con ella: `invalid connection option "pgbouncer"`. Y no
+    basta con avisarlo una vez, porque esa misma cadena se pega despues en el
+    panel del hosting y en los secretos del repositorio, donde falla ya en
+    produccion.
+    """
+    from config.settings.base import _solo_lo_que_postgres_entiende
+
+    with pytest.warns(UserWarning, match="pgbouncer"):
+        limpias = _solo_lo_que_postgres_entiende(
+            {"sslmode": "require", "pgbouncer": "true", "connection_limit": "1"}
+        )
+
+    assert limpias == {"sslmode": "require"}
+
+
+def test_lo_que_postgres_si_entiende_se_respeta():
+    """La lista de lo valido sale de la libreria, no de una escrita a mano."""
+    from config.settings.base import _solo_lo_que_postgres_entiende
+
+    validas = {"sslmode": "require", "channel_binding": "require", "connect_timeout": "10"}
+    assert _solo_lo_que_postgres_entiende(validas) == validas
 
 
 def test_el_env_nunca_sube():

@@ -4,6 +4,7 @@ Lo mismo que Core Pos, por el principio VI: quien mantiene el producto mantiene
 el sitio, y dos mundos distintos terminan con uno de los dos abandonado.
 """
 
+import warnings
 from pathlib import Path
 
 import environ
@@ -69,6 +70,43 @@ TEMPLATES = [
 
 DATABASES = {"default": env.db("DATABASE_URL")}
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
+
+
+def _solo_lo_que_postgres_entiende(opciones):
+    """Descarta los parametros de la cadena que no son de Postgres.
+
+    Los proveedores reparten cadenas con parametros de otras herramientas
+    metidos dentro. Supabase da la suya con `?pgbouncer=true`, que es de
+    Prisma; otras traen `schema` o `connection_limit`. Django los pasa tal cual
+    a psycopg, y psycopg no arranca:
+
+        ProgrammingError: invalid connection option "pgbouncer"
+
+    Eso no se arregla explicandolo una vez, porque la misma cadena se pega
+    despues en el panel del hosting y en los secretos del repositorio, y ahi
+    falla en produccion. Se limpia aqui, una sola vez, para todos los entornos.
+
+    Lo valido se le pregunta a la propia libreria en vez de escribirlo a mano:
+    una lista escrita a mano envejece, y el dia que Postgres admita un
+    parametro nuevo lo estariamos tirando.
+    """
+    from psycopg import pq
+
+    validas = {opcion.keyword.decode() for opcion in pq.Conninfo.get_defaults()}
+    sobran = sorted(set(opciones) - validas)
+    if sobran:
+        warnings.warn(
+            "DATABASE_URL trae parametros que Postgres no entiende y se ignoran: "
+            f"{', '.join(sobran)}. Son de otras herramientas.",
+            stacklevel=2,
+        )
+    return {clave: valor for clave, valor in opciones.items() if clave in validas}
+
+
+if DATABASES["default"].get("OPTIONS"):
+    DATABASES["default"]["OPTIONS"] = _solo_lo_que_postgres_entiende(
+        DATABASES["default"]["OPTIONS"]
+    )
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
