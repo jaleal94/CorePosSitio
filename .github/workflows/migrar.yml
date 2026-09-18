@@ -29,9 +29,15 @@ jobs:
       DJANGO_SETTINGS_MODULE: config.settings.vercel
 
     steps:
+      # Lo que escribio la persona pasa por una variable de entorno y no se
+      # interpola dentro del guion. Interpolarlo deja que el texto del
+      # formulario se ejecute como ordenes en la maquina que tiene los secretos
+      # de la base.
       - name: Confirmar que fue a proposito
+        env:
+          CONFIRMACION: ${{ inputs.confirmar }}
         run: |
-          if [ "${{ inputs.confirmar }}" != "migrar" ]; then
+          if [ "$CONFIRMACION" != "migrar" ]; then
             echo "::error::Escriba 'migrar' en el campo de confirmacion."
             exit 1
           fi
