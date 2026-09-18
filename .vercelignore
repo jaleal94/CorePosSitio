@@ -1,5 +1,6 @@
 # Lo que no tiene por que subir al servidor.
 .venv/
+.venv-de-construccion/
 .git/
 __pycache__/
 *.pyc
